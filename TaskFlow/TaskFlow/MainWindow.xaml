@@ -146,38 +146,58 @@
                         </Border>
                     </Grid>
 
+
                     <!-- Добавление задачи -->
                     <TextBlock Text="Добавить новую задачу"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="#202B3C"
-                               Margin="0,0,0,12"/>
+           FontSize="18"
+           FontWeight="SemiBold"
+           Foreground="#202B3C"
+           Margin="0,0,0,12"/>
 
                     <Grid Margin="0,0,0,30">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="135"/>
                             <ColumnDefinition Width="150"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- Название задачи -->
                         <TextBox x:Name="TaskTitleInput"
-                                 Grid.Column="0"
-                                 Height="43"
-                                 FontSize="14"
-                                 Padding="12,8"
-                                 VerticalContentAlignment="Center"
-                                 ToolTip="Введите название задачи"/>
+             Grid.Column="0"
+             Height="43"
+             FontSize="14"
+             Padding="12,8"
+             VerticalContentAlignment="Center"
+             ToolTip="Введите название задачи"/>
 
-                        <Button Grid.Column="1"
-                                Content="+ Добавить"
-                                Height="43"
-                                Margin="10,0,0,0"
-                                Background="#536FE8"
-                                Foreground="White"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                BorderThickness="0"
-                                Cursor="Hand"
-                                Click="AddTask_Click"/>
+                        <!-- Выбор приоритета -->
+                        <ComboBox x:Name="TaskPriorityInput"
+              Grid.Column="1"
+              Height="43"
+              Margin="10,0,0,0"
+              FontSize="13"
+              SelectedIndex="1"
+              VerticalContentAlignment="Center">
+
+                            <ComboBoxItem Content="Низкий"/>
+                            <ComboBoxItem Content="Средний"/>
+                            <ComboBoxItem Content="Высокий"/>
+                            <ComboBoxItem Content="Критический"/>
+
+                        </ComboBox>
+
+                        <!-- Кнопка добавления -->
+                        <Button Grid.Column="2"
+            Content="+ Добавить"
+            Height="43"
+            Margin="10,0,0,0"
+            Background="#536FE8"
+            Foreground="White"
+            FontSize="14"
+            FontWeight="SemiBold"
+            BorderThickness="0"
+            Cursor="Hand"
+            Click="AddTask_Click"/>
                     </Grid>
 
                     <!-- Список задач -->
@@ -235,6 +255,11 @@
                                             <TextBlock Text="{Binding StatusText}"
                                                        FontSize="12"
                                                        Foreground="#788397"
+                                                       Margin="0,5,0,0"/>
+                                            <TextBlock Text="{Binding Priority,
+                                                       StringFormat=Приоритет: {0}}"
+                                                       FontSize="12"
+                                                       Foreground="#536FE8"
                                                        Margin="0,5,0,0"/>
                                         </StackPanel>
 

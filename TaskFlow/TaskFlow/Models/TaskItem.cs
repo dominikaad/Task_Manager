@@ -5,6 +5,7 @@ namespace TaskFlow.Models
     public class TaskItem : INotifyPropertyChanged
     {
         private string _title = string.Empty;
+        private string _priority = "Средний";
         private bool _isCompleted;
 
         // Название задачи
@@ -49,6 +50,17 @@ namespace TaskFlow.Models
                 this,
                 new PropertyChangedEventArgs(propertyName)
             );
+        }
+
+        // Приоритет задачи
+        public string Priority
+        {
+            get { return _priority; }
+            set
+            {
+                _priority = value;
+                OnPropertyChanged(nameof(Priority));
+            }
         }
     }
 }

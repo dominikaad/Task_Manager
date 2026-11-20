@@ -33,27 +33,33 @@ namespace TaskFlow
             UpdateStatistics();
         }
 
+
         // Добавление начальных задач для демонстрации
         private void AddInitialTasks()
         {
             Tasks.Add(new TaskItem
             {
                 Title = "Изучить C#",
-                IsCompleted = false
+                IsCompleted = false,
+                Priority = "Высокий"
             });
 
             Tasks.Add(new TaskItem
             {
                 Title = "Выполнить лабораторную работу",
-                IsCompleted = false
+                IsCompleted = false,
+                Priority = "Критический"
             });
 
             Tasks.Add(new TaskItem
             {
                 Title = "Создать проект TaskFlow",
-                IsCompleted = true
+                IsCompleted = true,
+                Priority = "Средний"
             });
         }
+
+
 
         // Добавление новой задачи
         private void AddTask_Click(object sender, RoutedEventArgs e)
@@ -73,11 +79,20 @@ namespace TaskFlow
                 return;
             }
 
+            // Получаем выбранный приоритет
+            string priority = "Средний";
+
+            if (TaskPriorityInput.SelectedItem is ComboBoxItem selectedItem)
+            {
+                priority = selectedItem.Content.ToString() ?? "Средний";
+            }
+
             // Создаем новую задачу
             TaskItem newTask = new TaskItem
             {
                 Title = title,
-                IsCompleted = false
+                IsCompleted = false,
+                Priority = priority
             };
 
             // Добавляем задачу в коллекцию
@@ -86,9 +101,13 @@ namespace TaskFlow
             // Очищаем поле ввода
             TaskTitleInput.Clear();
 
+            // Возвращаем приоритет по умолчанию
+            TaskPriorityInput.SelectedIndex = 1;
+
             // Возвращаем курсор в поле ввода
             TaskTitleInput.Focus();
         }
+
 
         // Удаление задачи
         private void DeleteTask_Click(object sender, RoutedEventArgs e)
