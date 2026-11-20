@@ -7,6 +7,7 @@ namespace TaskFlow.Models
         private string _title = string.Empty;
         private string _priority = "Средний";
         private bool _isCompleted;
+        private DateTime? _deadline;
 
         // Название задачи
         public string Title
@@ -60,6 +61,32 @@ namespace TaskFlow.Models
             {
                 _priority = value;
                 OnPropertyChanged(nameof(Priority));
+            }
+        }
+        // Срок выполнения задачи
+        public DateTime? Deadline
+        {
+            get { return _deadline; }
+            set
+            {
+                _deadline = value;
+
+                OnPropertyChanged(nameof(Deadline));
+                OnPropertyChanged(nameof(DeadlineText));
+            }
+        }
+
+        // Текстовое отображение срока выполнения
+        public string DeadlineText
+        {
+            get
+            {
+                if (Deadline.HasValue)
+                {
+                    return "Срок: " + Deadline.Value.ToString("dd.MM.yyyy");
+                }
+
+                return "Срок не указан";
             }
         }
     }

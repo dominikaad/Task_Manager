@@ -34,6 +34,7 @@ namespace TaskFlow
         }
 
 
+
         // Добавление начальных задач для демонстрации
         private void AddInitialTasks()
         {
@@ -41,23 +42,28 @@ namespace TaskFlow
             {
                 Title = "Изучить C#",
                 IsCompleted = false,
-                Priority = "Высокий"
+                Priority = "Высокий",
+                Deadline = DateTime.Today.AddDays(3)
             });
 
             Tasks.Add(new TaskItem
             {
                 Title = "Выполнить лабораторную работу",
                 IsCompleted = false,
-                Priority = "Критический"
+                Priority = "Критический",
+                Deadline = DateTime.Today.AddDays(1)
             });
 
             Tasks.Add(new TaskItem
             {
                 Title = "Создать проект TaskFlow",
                 IsCompleted = true,
-                Priority = "Средний"
+                Priority = "Средний",
+                Deadline = DateTime.Today.AddDays(-1)
             });
         }
+
+
 
 
 
@@ -87,12 +93,16 @@ namespace TaskFlow
                 priority = selectedItem.Content.ToString() ?? "Средний";
             }
 
+            // Получаем выбранную дату
+            DateTime? deadline = TaskDeadlineInput.SelectedDate;
+
             // Создаем новую задачу
             TaskItem newTask = new TaskItem
             {
                 Title = title,
                 IsCompleted = false,
-                Priority = priority
+                Priority = priority,
+                Deadline = deadline
             };
 
             // Добавляем задачу в коллекцию
@@ -101,12 +111,16 @@ namespace TaskFlow
             // Очищаем поле ввода
             TaskTitleInput.Clear();
 
-            // Возвращаем приоритет по умолчанию
+            // Сбрасываем приоритет
             TaskPriorityInput.SelectedIndex = 1;
+
+            // Очищаем выбранную дату
+            TaskDeadlineInput.SelectedDate = null;
 
             // Возвращаем курсор в поле ввода
             TaskTitleInput.Focus();
         }
+
 
 
         // Удаление задачи
