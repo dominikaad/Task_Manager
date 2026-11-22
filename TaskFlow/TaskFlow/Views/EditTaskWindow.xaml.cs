@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using TaskFlow.Models;
@@ -7,7 +8,6 @@ namespace TaskFlow.Views
 {
     public partial class EditTaskWindow : Window
     {
-        // Задача, которую редактируем
         private readonly TaskItem _task;
 
         public EditTaskWindow(TaskItem task)
@@ -16,54 +16,45 @@ namespace TaskFlow.Views
 
             _task = task;
 
-            // Заполняем поля текущими значениями задачи
-            TitleInput.Text = _task.Title;
+            // Заполняем поля текущими данными задачи
+            TitleInput.Text = task.Title;
 
-            DeadlineInput.SelectedDate = _task.Deadline;
-
-            // Устанавливаем текущий приоритет
             foreach (ComboBoxItem item in PriorityInput.Items)
             {
-                if (item.Content.ToString() == _task.Priority)
+                if (item.Content.ToString() == task.Priority)
                 {
                     PriorityInput.SelectedItem = item;
                     break;
                 }
             }
+
+            DeadlineInput.SelectedDate = task.Deadline;
         }
 
         // Сохранение изменений
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            string title = TitleInput.Text.Trim();
-
-            // Проверяем название
-            if (string.IsNullOrWhiteSpace(title))
+            if (string.IsNullOrWhiteSpace(TitleInput.Text))
             {
                 MessageBox.Show(
-                    "Введите название задачи!",
-                    "Предупреждение",
+                    "Введите название задачи.",
+                    "Ошибка",
                     MessageBoxButton.OK,
-                    MessageBoxImage.Warning
-                );
+                    MessageBoxImage.Warning);
 
                 return;
             }
 
-            // Получаем выбранный приоритет
-            string priority = "Средний";
-
-            if (PriorityInput.SelectedItem is ComboBoxItem selectedItem)
+            if (PriorityInput.SelectedItem is not ComboBoxItem selectedPriority)
             {
-                priority = selectedItem.Content.ToString() ?? "Средний";
+                MessageBox.Show("Выберите приоритет задачи.");
+                return;
             }
 
-            // Обновляем свойства задачи
-            _task.Title = title;
-            _task.Priority = priority;
+            _task.Title = TitleInput.Text.Trim();
+            _task.Priority = selectedPriority.Content.ToString();
             _task.Deadline = DeadlineInput.SelectedDate;
 
-            // Сообщаем, что изменения сохранены
             DialogResult = true;
         }
 
