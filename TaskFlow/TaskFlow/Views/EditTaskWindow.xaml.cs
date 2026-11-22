@@ -1,8 +1,8 @@
-﻿
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using TaskFlow.Models;
+
 
 namespace TaskFlow.Views
 {

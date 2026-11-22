@@ -6,6 +6,8 @@ using System.Windows;
 using System.Windows.Controls;
 using TaskFlow.Models;
 using TaskFlow.Views;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace TaskFlow
 {
@@ -13,6 +15,7 @@ namespace TaskFlow
     {
         // Коллекция всех задач
         public ObservableCollection<TaskItem> Tasks { get; set; }
+        private ICollectionView? _tasksView;
 
         public MainWindow()
         {
@@ -24,6 +27,12 @@ namespace TaskFlow
             // Связываем коллекцию с интерфейсом
             DataContext = this;
 
+            // Получаем представление коллекции задач
+            _tasksView = CollectionViewSource.GetDefaultView(Tasks);
+
+            // Подключаем фильтрацию
+            _tasksView.Filter = FilterTasks;
+
             // Подписываемся на изменения коллекции
             Tasks.CollectionChanged += Tasks_CollectionChanged;
 
@@ -32,10 +41,74 @@ namespace TaskFlow
 
             // Обновляем статистику
             UpdateStatistics();
+
+
+            // Проверка задачи по выбранным фильтрам
+            private bool FilterTasks(object item)
+            {
+                if (item is not TaskItem task)
+                    return false;
+
+                // Поиск по названию
+                string searchText = SearchInput.Text.Trim();
+
+                if (!string.IsNullOrWhiteSpace(searchText) &&
+                    !task.Title.Contains(
+                        searchText,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+
+                // Фильтр по приоритету
+                string priority = "Все приоритеты";
+
+                if (PriorityFilter.SelectedItem is ComboBoxItem priorityItem)
+                    priority = priorityItem.Content.ToString() ?? priority;
+
+                if (priority != "Все приоритеты" &&
+                    task.Priority != priority)
+                {
+                    return false;
+                }
+
+                // Фильтр по статусу
+                string status = "Все задачи";
+
+                if (StatusFilter.SelectedItem is ComboBoxItem statusItem)
+                    status = statusItem.Content.ToString() ?? status;
+
+                if (status == "Активные" && task.IsCompleted)
+                    return false;
+
+                if (status == "Выполненные" && !task.IsCompleted)
+                    return false;
+
+                return true;
+            }
+
+            // Обновление фильтрации
+            private void RefreshTaskFilter()
+            {
+                _tasksView?.Refresh();
+            }
+
+            // Изменение поискового запроса
+            private void SearchInput_TextChanged(
+                object sender,
+                System.Windows.Controls.TextChangedEventArgs e)
+            {
+                RefreshTaskFilter();
+            }
+
+            // Изменение фильтров
+            private void Filter_SelectionChanged(
+                object sender,
+                System.Windows.Controls.SelectionChangedEventArgs e)
+            {
+                RefreshTaskFilter();
+            }
         }
-
-
-
         // Добавление начальных задач для демонстрации
         private void AddInitialTasks()
         {
@@ -63,8 +136,6 @@ namespace TaskFlow
                 Deadline = DateTime.Today.AddDays(-1)
             });
         }
-
-
 
 
 
@@ -189,6 +260,8 @@ namespace TaskFlow
             PropertyChangedEventArgs e)
         {
             UpdateStatistics();
+            _tasksView?.Refresh();
+
         }
 
         // Обновление статистики
