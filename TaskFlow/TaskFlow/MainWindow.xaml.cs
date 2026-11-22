@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using TaskFlow.Models;
+using TaskFlow.Views;
 
 namespace TaskFlow
 {
@@ -121,8 +122,6 @@ namespace TaskFlow
             TaskTitleInput.Focus();
         }
 
-
-
         // Удаление задачи
         private void DeleteTask_Click(object sender, RoutedEventArgs e)
         {
@@ -132,6 +131,31 @@ namespace TaskFlow
                 Tasks.Remove(task);
             }
         }
+
+        // Редактирование задачи
+        private void EditTask_Click(object sender, RoutedEventArgs e)
+        {
+            // Получаем задачу, для которой нажали кнопку
+            if (sender is Button button &&
+                button.Tag is TaskItem task)
+            {
+                // Создаем окно редактирования
+                EditTaskWindow editWindow = new EditTaskWindow(task);
+
+                // Указываем главное окно владельцем
+                editWindow.Owner = this;
+
+                // Открываем окно
+                bool? result = editWindow.ShowDialog();
+
+                // Если изменения сохранены, обновляем статистику
+                if (result == true)
+                {
+                    UpdateStatistics();
+                }
+            }
+        }
+
 
         // Реакция на изменение коллекции задач
         private void Tasks_CollectionChanged(

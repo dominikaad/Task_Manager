@@ -11,8 +11,11 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="230"/>
+            <ColumnDefinition Width="35"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="85"/>
+            <ColumnDefinition Width="85"/>
         </Grid.ColumnDefinitions>
 
         <!-- Боковая панель -->
@@ -165,12 +168,12 @@
 
                         <!-- Название задачи -->
                         <TextBox x:Name="TaskTitleInput"
-             Grid.Column="0"
-             Height="43"
-             FontSize="14"
-             Padding="12,8"
-             VerticalContentAlignment="Center"
-             ToolTip="Введите название задачи"/>
+                            Grid.Column="0"
+                            Height="43"
+                            FontSize="14"
+                            Padding="12,8"
+                            VerticalContentAlignment="Center"
+                            ToolTip="Введите название задачи"/>
 
                         <!-- Выбор приоритета -->
                         <ComboBox x:Name="TaskPriorityInput"
@@ -278,16 +281,29 @@
                                                        Margin="0,5,0,0"/>
                                         </StackPanel>
 
-                                        <Button Grid.Column="3"
-                                                Content="Удалить"
-                                                Tag="{Binding}"
-                                                Click="DeleteTask_Click"
-                                                Background="#FCEAEA"
-                                                Foreground="#C94C4C"
-                                                BorderThickness="0"
-                                                Padding="8,6"
-                                                Cursor="Hand"/>
 
+                                        <!-- Кнопка редактирования -->
+                                        <Button Grid.Column="3"
+                                            Content="Изменить"
+                                            Tag="{Binding}"
+                                            Click="EditTask_Click"
+                                            Background="#E8EDFF"
+                                            Foreground="#536FE8"
+                                            BorderThickness="0"
+                                            Padding="8,6"
+                                            Cursor="Hand"
+                                            Margin="0,0,5,0"/>
+
+                                        <!-- Кнопка удаления -->
+                                        <Button Grid.Column="4"
+                                            Content="Удалить"
+                                            Tag="{Binding}"
+                                            Click="DeleteTask_Click"
+                                            Background="#FCEAEA"
+                                            Foreground="#C94C4C"
+                                            BorderThickness="0"
+                                            Padding="8,6"
+                                            Cursor="Hand"/>     
                                     </Grid>
                                 </Border>
                             </DataTemplate>
