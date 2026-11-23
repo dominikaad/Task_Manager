@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -9,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using TaskFlow.Models;
 using TaskFlow.Views;
+using TaskFlow.Services;
 
 namespace TaskFlow
 {
@@ -24,25 +24,33 @@ namespace TaskFlow
         {
             InitializeComponent();
 
-            // Создаем коллекцию задач
-            Tasks = new ObservableCollection<TaskItem>();
+            // Загружаем задачи из файла
+            var savedTasks = TaskStorageService.LoadTasks();
 
-            // Связываем коллекцию с интерфейсом
+            Tasks = savedTasks == null
+                ? new ObservableCollection<TaskItem>()
+                : new ObservableCollection<TaskItem>(savedTasks);
+
             DataContext = this;
 
-            // Получаем представление коллекции
+            // Настраиваем фильтрацию
             _tasksView = CollectionViewSource.GetDefaultView(Tasks);
-
-            // Подключаем фильтрацию
             _tasksView.Filter = FilterTasks;
 
-            // Подписываемся на изменения коллекции
+            // Подписываем задачи на отслеживание изменений
+            foreach (var task in Tasks)
+            {
+                task.PropertyChanged += Task_PropertyChanged;
+            }
+
             Tasks.CollectionChanged += Tasks_CollectionChanged;
 
-            // Добавляем демонстрационные задачи
-            AddInitialTasks();
+            // Демонстрационные задачи создаём только при первом запуске
+            if (savedTasks == null)
+            {
+                AddInitialTasks();
+            }
 
-            // Обновляем статистику
             UpdateStatistics();
         }
 
@@ -234,21 +242,26 @@ namespace TaskFlow
             }
         }
 
-        // Реакция на изменение коллекции задач
-        private void Tasks_CollectionChanged(
-            object? sender,
-            NotifyCollectionChangedEventArgs e)
+        private void SaveTasks()
         {
-            // Подписываемся на изменения новых задач
-            if (e.NewItems != null)
+            try
             {
-                foreach (TaskItem task in e.NewItems)
-                {
-                    task.PropertyChanged += Task_PropertyChanged;
-                }
+                TaskStorageService.SaveTasks(Tasks);
             }
-
-            // Отписываемся от удаленных задач
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Не удалось сохранить задачи.\n" + ex.Message,
+                    "Ошибка сохранения",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
+        }
+        // Реакция на изменение коллекции задач
+        private void Tasks_CollectionChanged(object? sender,NotifyCollectionChangedEventArgs e)
+        {
+            // Отписываемся от удалённых задач
             if (e.OldItems != null)
             {
                 foreach (TaskItem task in e.OldItems)
@@ -257,8 +270,19 @@ namespace TaskFlow
                 }
             }
 
+            // Подписываемся на новые задачи
+            if (e.NewItems != null)
+            {
+                foreach (TaskItem task in e.NewItems)
+                {
+                    task.PropertyChanged += Task_PropertyChanged;
+                }
+            }
+
             UpdateStatistics();
-            RefreshTaskFilter();
+
+            // Сохраняем изменения
+            SaveTasks();
         }
 
         // Реакция на изменение свойств задачи
@@ -267,7 +291,12 @@ namespace TaskFlow
             PropertyChangedEventArgs e)
         {
             UpdateStatistics();
-            RefreshTaskFilter();
+
+            // Обновляем фильтрацию
+            _tasksView?.Refresh();
+
+            // Сохраняем изменения задачи
+            SaveTasks();
         }
 
         // Обновление статистики
