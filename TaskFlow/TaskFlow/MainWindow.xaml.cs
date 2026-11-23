@@ -1,13 +1,14 @@
-﻿using System.Linq;
+﻿
+using System;
+using System.Linq;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using TaskFlow.Models;
 using TaskFlow.Views;
-using System.ComponentModel;
-using System.Windows.Data;
 
 namespace TaskFlow
 {
@@ -15,6 +16,8 @@ namespace TaskFlow
     {
         // Коллекция всех задач
         public ObservableCollection<TaskItem> Tasks { get; set; }
+
+        // Представление коллекции для поиска и фильтрации
         private ICollectionView? _tasksView;
 
         public MainWindow()
@@ -27,7 +30,7 @@ namespace TaskFlow
             // Связываем коллекцию с интерфейсом
             DataContext = this;
 
-            // Получаем представление коллекции задач
+            // Получаем представление коллекции
             _tasksView = CollectionViewSource.GetDefaultView(Tasks);
 
             // Подключаем фильтрацию
@@ -41,74 +44,80 @@ namespace TaskFlow
 
             // Обновляем статистику
             UpdateStatistics();
-
-
-            // Проверка задачи по выбранным фильтрам
-            private bool FilterTasks(object item)
-            {
-                if (item is not TaskItem task)
-                    return false;
-
-                // Поиск по названию
-                string searchText = SearchInput.Text.Trim();
-
-                if (!string.IsNullOrWhiteSpace(searchText) &&
-                    !task.Title.Contains(
-                        searchText,
-                        StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
-
-                // Фильтр по приоритету
-                string priority = "Все приоритеты";
-
-                if (PriorityFilter.SelectedItem is ComboBoxItem priorityItem)
-                    priority = priorityItem.Content.ToString() ?? priority;
-
-                if (priority != "Все приоритеты" &&
-                    task.Priority != priority)
-                {
-                    return false;
-                }
-
-                // Фильтр по статусу
-                string status = "Все задачи";
-
-                if (StatusFilter.SelectedItem is ComboBoxItem statusItem)
-                    status = statusItem.Content.ToString() ?? status;
-
-                if (status == "Активные" && task.IsCompleted)
-                    return false;
-
-                if (status == "Выполненные" && !task.IsCompleted)
-                    return false;
-
-                return true;
-            }
-
-            // Обновление фильтрации
-            private void RefreshTaskFilter()
-            {
-                _tasksView?.Refresh();
-            }
-
-            // Изменение поискового запроса
-            private void SearchInput_TextChanged(
-                object sender,
-                System.Windows.Controls.TextChangedEventArgs e)
-            {
-                RefreshTaskFilter();
-            }
-
-            // Изменение фильтров
-            private void Filter_SelectionChanged(
-                object sender,
-                System.Windows.Controls.SelectionChangedEventArgs e)
-            {
-                RefreshTaskFilter();
-            }
         }
+
+        // Проверка задачи по выбранным фильтрам
+        private bool FilterTasks(object item)
+        {
+            if (item is not TaskItem task)
+                return false;
+
+            // Поиск по названию
+            string searchText = SearchInput.Text.Trim();
+
+            if (!string.IsNullOrWhiteSpace(searchText) &&
+                !task.Title.Contains(
+                    searchText,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            // Фильтр по приоритету
+            string priority = "Все приоритеты";
+
+            if (PriorityFilter.SelectedItem is ComboBoxItem priorityItem)
+            {
+                priority = priorityItem.Content?.ToString()
+                           ?? "Все приоритеты";
+            }
+
+            if (priority != "Все приоритеты" &&
+                task.Priority != priority)
+            {
+                return false;
+            }
+
+            // Фильтр по статусу
+            string status = "Все задачи";
+
+            if (StatusFilter.SelectedItem is ComboBoxItem statusItem)
+            {
+                status = statusItem.Content?.ToString()
+                         ?? "Все задачи";
+            }
+
+            if (status == "Активные" && task.IsCompleted)
+                return false;
+
+            if (status == "Выполненные" && !task.IsCompleted)
+                return false;
+
+            return true;
+        }
+
+        // Обновление фильтрации
+        private void RefreshTaskFilter()
+        {
+            _tasksView?.Refresh();
+        }
+
+        // Изменение поискового запроса
+        private void SearchInput_TextChanged(
+            object sender,
+            TextChangedEventArgs e)
+        {
+            RefreshTaskFilter();
+        }
+
+        // Изменение выбранных фильтров
+        private void Filter_SelectionChanged(
+            object sender,
+            SelectionChangedEventArgs e)
+        {
+            RefreshTaskFilter();
+        }
+
         // Добавление начальных задач для демонстрации
         private void AddInitialTasks()
         {
@@ -137,8 +146,6 @@ namespace TaskFlow
             });
         }
 
-
-
         // Добавление новой задачи
         private void AddTask_Click(object sender, RoutedEventArgs e)
         {
@@ -162,7 +169,7 @@ namespace TaskFlow
 
             if (TaskPriorityInput.SelectedItem is ComboBoxItem selectedItem)
             {
-                priority = selectedItem.Content.ToString() ?? "Средний";
+                priority = selectedItem.Content?.ToString() ?? "Средний";
             }
 
             // Получаем выбранную дату
@@ -177,13 +184,13 @@ namespace TaskFlow
                 Deadline = deadline
             };
 
-            // Добавляем задачу в коллекцию
+            // Добавляем задачу в начало списка
             Tasks.Insert(0, newTask);
 
-            // Очищаем поле ввода
+            // Очищаем поле названия
             TaskTitleInput.Clear();
 
-            // Сбрасываем приоритет
+            // Сбрасываем приоритет на «Средний»
             TaskPriorityInput.SelectedIndex = 1;
 
             // Очищаем выбранную дату
@@ -203,10 +210,9 @@ namespace TaskFlow
             }
         }
 
-        // Редактирование задачи
+        // Редактирование задачи через отдельное окно
         private void EditTask_Click(object sender, RoutedEventArgs e)
         {
-            // Получаем задачу, для которой нажали кнопку
             if (sender is Button button &&
                 button.Tag is TaskItem task)
             {
@@ -216,17 +222,17 @@ namespace TaskFlow
                 // Указываем главное окно владельцем
                 editWindow.Owner = this;
 
-                // Открываем окно
+                // Открываем окно редактирования
                 bool? result = editWindow.ShowDialog();
 
-                // Если изменения сохранены, обновляем статистику
+                // Если изменения сохранены
                 if (result == true)
                 {
                     UpdateStatistics();
+                    RefreshTaskFilter();
                 }
             }
         }
-
 
         // Реакция на изменение коллекции задач
         private void Tasks_CollectionChanged(
@@ -252,6 +258,7 @@ namespace TaskFlow
             }
 
             UpdateStatistics();
+            RefreshTaskFilter();
         }
 
         // Реакция на изменение свойств задачи
@@ -260,8 +267,7 @@ namespace TaskFlow
             PropertyChangedEventArgs e)
         {
             UpdateStatistics();
-            _tasksView?.Refresh();
-
+            RefreshTaskFilter();
         }
 
         // Обновление статистики

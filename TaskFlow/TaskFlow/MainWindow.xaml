@@ -11,15 +11,14 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="35"/>
+            <ColumnDefinition Width="230"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="100"/>
-            <ColumnDefinition Width="85"/>
-            <ColumnDefinition Width="85"/>
         </Grid.ColumnDefinitions>
 
         <!-- Боковая панель -->
-        <Border Grid.Column="0" Background="#202B3C">
+        <Border Grid.Column="0"
+                Background="#202B3C">
+
             <StackPanel Margin="25">
 
                 <TextBlock Text="TaskFlow"
@@ -37,6 +36,7 @@
                         CornerRadius="8"
                         Padding="12"
                         Margin="0,0,0,10">
+
                     <TextBlock Text="✓   Мои задачи"
                                FontSize="15"
                                Foreground="White"/>
@@ -71,11 +71,15 @@
         </Border>
 
         <!-- Основная рабочая область -->
-        <Border Grid.Column="1" Padding="35">
+        <Border Grid.Column="1"
+                Padding="35">
 
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+
                 <StackPanel>
 
+                    <!-- Заголовок -->
                     <TextBlock Text="Мои задачи"
                                FontSize="30"
                                FontWeight="Bold"
@@ -88,21 +92,25 @@
 
                     <!-- Статистика -->
                     <Grid Margin="0,0,0,30">
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- Всего задач -->
                         <Border Grid.Column="0"
                                 Background="White"
                                 CornerRadius="10"
                                 Padding="18"
                                 Margin="0,0,10,0">
+
                             <StackPanel>
                                 <TextBlock Text="Всего задач"
                                            Foreground="#788397"
                                            FontSize="13"/>
+
                                 <TextBlock x:Name="TotalCountText"
                                            Text="0"
                                            FontSize="28"
@@ -112,15 +120,18 @@
                             </StackPanel>
                         </Border>
 
+                        <!-- Активные задачи -->
                         <Border Grid.Column="1"
                                 Background="White"
                                 CornerRadius="10"
                                 Padding="18"
                                 Margin="5,0">
+
                             <StackPanel>
                                 <TextBlock Text="Активные"
                                            Foreground="#788397"
                                            FontSize="13"/>
+
                                 <TextBlock x:Name="ActiveCountText"
                                            Text="0"
                                            FontSize="28"
@@ -130,15 +141,18 @@
                             </StackPanel>
                         </Border>
 
+                        <!-- Выполненные задачи -->
                         <Border Grid.Column="2"
                                 Background="White"
                                 CornerRadius="10"
                                 Padding="18"
                                 Margin="10,0,0,0">
+
                             <StackPanel>
                                 <TextBlock Text="Выполнено"
                                            Foreground="#788397"
                                            FontSize="13"/>
+
                                 <TextBlock x:Name="CompletedCountText"
                                            Text="0"
                                            FontSize="28"
@@ -147,42 +161,42 @@
                                            Margin="0,8,0,0"/>
                             </StackPanel>
                         </Border>
+
                     </Grid>
-
-
 
                     <!-- Добавление задачи -->
                     <TextBlock Text="Добавить новую задачу"
-                        FontSize="18"
-                        FontWeight="SemiBold"
-                        Foreground="#202B3C"
-                        Margin="0,0,0,12"/>
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#202B3C"
+                               Margin="0,0,0,12"/>
 
                     <Grid Margin="0,0,0,30">
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="135"/>
+                            <ColumnDefinition Width="125"/>
                             <ColumnDefinition Width="145"/>
-                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="120"/>
                         </Grid.ColumnDefinitions>
 
                         <!-- Название задачи -->
                         <TextBox x:Name="TaskTitleInput"
-                            Grid.Column="0"
-                            Height="43"
-                            FontSize="14"
-                            Padding="12,8"
-                            VerticalContentAlignment="Center"
-                            ToolTip="Введите название задачи"/>
+                                 Grid.Column="0"
+                                 Height="43"
+                                 FontSize="14"
+                                 Padding="12,8"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Введите название задачи"/>
 
                         <!-- Выбор приоритета -->
                         <ComboBox x:Name="TaskPriorityInput"
-                         Grid.Column="1"
-                         Height="43"
-                         Margin="10,0,0,0"
-                         FontSize="13"
-                         SelectedIndex="1"
-                         VerticalContentAlignment="Center">        
+                                  Grid.Column="1"
+                                  Height="43"
+                                  Margin="10,0,0,0"
+                                  FontSize="13"
+                                  SelectedIndex="1"
+                                  VerticalContentAlignment="Center">
 
                             <ComboBoxItem Content="Низкий"/>
                             <ComboBoxItem Content="Средний"/>
@@ -193,25 +207,26 @@
 
                         <!-- Выбор срока выполнения -->
                         <DatePicker x:Name="TaskDeadlineInput"
-                            Grid.Column="2"
-                            Height="43"
-                            Margin="10,0,0,0"
-                            FontSize="13"
-                            SelectedDateFormat="Short"
-                            ToolTip="Выберите срок выполнения задачи"/>
+                                    Grid.Column="2"
+                                    Height="43"
+                                    Margin="10,0,0,0"
+                                    FontSize="13"
+                                    SelectedDateFormat="Short"
+                                    ToolTip="Выберите срок выполнения задачи"/>
 
                         <!-- Кнопка добавления -->
                         <Button Grid.Column="3"
-                            Content="+ Добавить"
-                            Height="43"
-                            Margin="10,0,0,0"
-                            Background="#536FE8"
-                            Foreground="White"
-                            FontSize="14"
-                            FontWeight="SemiBold"
-                            BorderThickness="0"
-                            Cursor="Hand"
-                            Click="AddTask_Click"/> 
+                                Content="+ Добавить"
+                                Height="43"
+                                Margin="10,0,0,0"
+                                Background="#536FE8"
+                                Foreground="White"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Click="AddTask_Click"/>
+
                     </Grid>
 
                     <!-- Список задач -->
@@ -221,19 +236,20 @@
                                Foreground="#202B3C"
                                Margin="0,0,0,15"/>
 
-
-                    <!-- Поиск и фильтрация задач -->
+                    <!-- Поиск и фильтрация -->
                     <StackPanel Margin="0,0,0,20">
 
+                        <!-- Поиск по названию -->
                         <TextBox x:Name="SearchInput"
-             Height="40"
-             Padding="12,8"
-             FontSize="14"
-             VerticalContentAlignment="Center"
-             ToolTip="Поиск по названию задачи"
-             TextChanged="SearchInput_TextChanged"/>
+                                 Height="40"
+                                 Padding="12,8"
+                                 FontSize="14"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Поиск по названию задачи"
+                                 TextChanged="SearchInput_TextChanged"/>
 
                         <Grid Margin="0,10,0,0">
+
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
@@ -241,35 +257,38 @@
 
                             <!-- Фильтр по приоритету -->
                             <ComboBox x:Name="PriorityFilter"
-                  Grid.Column="0"
-                  Height="38"
-                  Margin="0,0,5,0"
-                  SelectedIndex="0"
-                  SelectionChanged="Filter_SelectionChanged">
+                                      Grid.Column="0"
+                                      Height="38"
+                                      Margin="0,0,5,0"
+                                      SelectedIndex="0"
+                                      SelectionChanged="Filter_SelectionChanged">
 
                                 <ComboBoxItem Content="Все приоритеты"/>
                                 <ComboBoxItem Content="Низкий"/>
                                 <ComboBoxItem Content="Средний"/>
                                 <ComboBoxItem Content="Высокий"/>
                                 <ComboBoxItem Content="Критический"/>
+
                             </ComboBox>
 
                             <!-- Фильтр по статусу -->
                             <ComboBox x:Name="StatusFilter"
-                  Grid.Column="1"
-                  Height="38"
-                  Margin="5,0,0,0"
-                  SelectedIndex="0"
-                  SelectionChanged="Filter_SelectionChanged">
+                                      Grid.Column="1"
+                                      Height="38"
+                                      Margin="5,0,0,0"
+                                      SelectedIndex="0"
+                                      SelectionChanged="Filter_SelectionChanged">
 
                                 <ComboBoxItem Content="Все задачи"/>
                                 <ComboBoxItem Content="Активные"/>
                                 <ComboBoxItem Content="Выполненные"/>
+
                             </ComboBox>
+
                         </Grid>
                     </StackPanel>
 
-
+                    <!-- Список задач -->
                     <ListView x:Name="TasksList"
                               ItemsSource="{Binding Tasks}"
                               Background="Transparent"
@@ -278,37 +297,51 @@
 
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
+
                                 <Setter Property="Padding" Value="0"/>
-                                <Setter Property="Margin" Value="0,0,0,10"/>
+
+                                <Setter Property="Margin"
+                                        Value="0,0,0,10"/>
+
                                 <Setter Property="HorizontalContentAlignment"
                                         Value="Stretch"/>
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="BorderThickness" Value="0"/>
+
+                                <Setter Property="Background"
+                                        Value="Transparent"/>
+
+                                <Setter Property="BorderThickness"
+                                        Value="0"/>
+
                             </Style>
                         </ListView.ItemContainerStyle>
 
                         <ListView.ItemTemplate>
                             <DataTemplate>
+
                                 <Border Background="White"
                                         CornerRadius="10"
                                         Padding="15">
 
                                     <Grid>
+
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="35"/>
                                             <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="110"/>
-                                            <ColumnDefinition Width="85"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
                                         </Grid.ColumnDefinitions>
 
+                                        <!-- Отметка выполнения -->
                                         <CheckBox Grid.Column="0"
                                                   VerticalAlignment="Center"
                                                   IsChecked="{Binding IsCompleted,
                                                   Mode=TwoWay,
                                                   UpdateSourceTrigger=PropertyChanged}"/>
 
+                                        <!-- Информация о задаче -->
                                         <StackPanel Grid.Column="1"
                                                     VerticalAlignment="Center">
+
                                             <TextBlock Text="{Binding Title}"
                                                        FontSize="14"
                                                        FontWeight="SemiBold"
@@ -319,51 +352,47 @@
                                                        FontSize="12"
                                                        Foreground="#788397"
                                                        Margin="0,5,0,0"/>
+
                                             <TextBlock Text="{Binding Priority,
                                                        StringFormat=Приоритет: {0}}"
                                                        FontSize="12"
                                                        Foreground="#536FE8"
                                                        Margin="0,5,0,0"/>
+
                                             <TextBlock Text="{Binding DeadlineText}"
                                                        FontSize="12"
                                                        Foreground="#788397"
                                                        Margin="0,5,0,0"/>
+
                                         </StackPanel>
 
-
-                                        <!-- Кнопка редактирования -->
-                                        <Button Grid.Column="3"
-                                            Content="Изменить"
-                                            Tag="{Binding}"
-                                            Click="EditTask_Click"
-                                            Background="#E8EDFF"
-                                            Foreground="#536FE8"
-                                            BorderThickness="0"
-                                            Padding="8,6"
-                                            Cursor="Hand"
-                                            Margin="0,0,5,0"/>
+                                        <!-- Кнопка изменения -->
+                                        <Button Grid.Column="2"
+                                                Content="Изменить"
+                                                Tag="{Binding}"
+                                                Click="EditTask_Click"
+                                                Background="#E8EDFF"
+                                                Foreground="#536FE8"
+                                                BorderThickness="0"
+                                                Padding="8,6"
+                                                Cursor="Hand"
+                                                Margin="5,0"/>
 
                                         <!-- Кнопка удаления -->
-                                        <Button Grid.Column="4"
-                                            Content="Удалить"
-                                            Tag="{Binding}"
-                                            Click="DeleteTask_Click"
-                                            Background="#FCEAEA"
-                                            Foreground="#C94C4C"
-                                            BorderThickness="0"
-                                            Padding="8,6"
-                                            Cursor="Hand"/>
-                                        <Button Content="Изменить"
-                                            Tag="{Binding}"
-                                            Click="EditTask_Click"
-                                            Background="#E8EDFF"
-                                            Foreground="#536DFE"
-                                            Padding="10"
-                                            Margin="0,0,0,5"
-                                            BorderThickness="0"
-                                            Cursor="Hand"/>
+                                        <Button Grid.Column="3"
+                                                Content="Удалить"
+                                                Tag="{Binding}"
+                                                Click="DeleteTask_Click"
+                                                Background="#FCEAEA"
+                                                Foreground="#C94C4C"
+                                                BorderThickness="0"
+                                                Padding="8,6"
+                                                Cursor="Hand"
+                                                Margin="5,0"/>
+
                                     </Grid>
                                 </Border>
+
                             </DataTemplate>
                         </ListView.ItemTemplate>
 
@@ -372,6 +401,5 @@
                 </StackPanel>
             </ScrollViewer>
         </Border>
-
     </Grid>
 </Window>
