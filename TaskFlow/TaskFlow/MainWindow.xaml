@@ -359,10 +359,32 @@
                                                        Foreground="#536FE8"
                                                        Margin="0,5,0,0"/>
 
-                                            <TextBlock Text="{Binding DeadlineText}"
+                                            <TextBlock Text="{Binding DeadlineStatusText}"
                                                        FontSize="12"
-                                                       Foreground="#788397"
-                                                       Margin="0,5,0,0"/>
+                                                       Margin="0,4,0,0">    
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#64748B"/>
+
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsOverdue}" Value="True">
+                                                                <Setter Property="Foreground" Value="#EF4444"/>
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                            </DataTrigger>
+
+                                                            <DataTrigger Binding="{Binding DeadlineStatusText}"
+                                                                Value="Срок сегодня">
+                                                                <Setter Property="Foreground" Value="#D97706"/>
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                            </DataTrigger>
+
+                                                            <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                                <Setter Property="Foreground" Value="#16A34A"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock> 
 
                                         </StackPanel>
 

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System;
 
 namespace TaskFlow.Models
 {
@@ -30,6 +31,8 @@ namespace TaskFlow.Models
 
                 OnPropertyChanged(nameof(IsCompleted));
                 OnPropertyChanged(nameof(StatusText));
+                OnPropertyChanged(nameof(IsOverdue));
+                OnPropertyChanged(nameof(DeadlineStatusText));
             }
         }
 
@@ -73,6 +76,8 @@ namespace TaskFlow.Models
 
                 OnPropertyChanged(nameof(Deadline));
                 OnPropertyChanged(nameof(DeadlineText));
+                OnPropertyChanged(nameof(IsOverdue));
+                OnPropertyChanged(nameof(DeadlineStatusText));
             }
         }
 
@@ -87,6 +92,28 @@ namespace TaskFlow.Models
                 }
 
                 return "Срок не указан";
+            }
+        }
+
+        public bool IsOverdue =>Deadline.HasValue && Deadline.Value.Date < DateTime.Today &&!IsCompleted;
+
+        public string DeadlineStatusText
+        {
+            get
+            {
+                if (IsCompleted)
+                    return "Выполнена";
+
+                if (!Deadline.HasValue)
+                    return "Без срока";
+
+                if (IsOverdue)
+                    return "Просрочена";
+
+                if (Deadline.Value.Date == DateTime.Today)
+                    return "Срок сегодня";
+
+                return $"Срок: {Deadline.Value:dd.MM.yyyy}";
             }
         }
     }
