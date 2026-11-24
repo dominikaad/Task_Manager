@@ -177,11 +177,9 @@ namespace TaskFlow.Views
             }
 
             // Цвета приоритетов
-            string[] priorities =
-            {"Низкий", "Средний", "Высокий", "Критический"};
+            string[] priorities = {"Низкий", "Средний", "Высокий", "Критический"};
 
-            Color[] priorityColors =
-            {Color.FromRgb(34, 197, 94), Color.FromRgb(59, 130, 246), Color.FromRgb(249, 115, 22), Color.FromRgb(239, 68, 68)};
+            Color[] priorityColors = {Color.FromRgb(34, 197, 94), Color.FromRgb(59, 130, 246), Color.FromRgb(249, 115, 22), Color.FromRgb(239, 68, 68)};
 
             // Создание ячеек календаря
             for (int i = 0; i < cellCount; i++)
@@ -457,11 +455,37 @@ namespace TaskFlow.Views
 
             // Выбираем сегодняшний день
             SelectedDate = today;
+            DateNavigationPicker.SelectedDate = DateTime.Today;
 
             // Перестраиваем календарь
             BuildCalendar();
 
             // Обновляем список задач
+            UpdateSelectedTasks();
+        }
+        private void DateNavigationPicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Проверяем, что дата действительно выбрана
+            if (DateNavigationPicker.SelectedDate == null)
+                return;
+
+            // Получаем выбранную дату
+            DateTime selectedDate =
+                DateNavigationPicker.SelectedDate.Value.Date;
+
+            // Устанавливаем выбранный день
+            SelectedDate = selectedDate;
+
+            // Переключаем календарь на нужный месяц
+            CurrentMonth = new DateTime(
+                selectedDate.Year,
+                selectedDate.Month,
+                1);
+
+            // Обновляем заголовок и календарную сетку
+            BuildCalendar();
+
+            // Обновляем задачи выбранного дня
             UpdateSelectedTasks();
         }
         private void MonthMode_Click(object sender, RoutedEventArgs e)
