@@ -152,7 +152,7 @@
                            Margin="0,7,0,25"/>
 
                 <!-- СТАТИСТИКА -->
-                <UniformGrid Columns="3"
+                <UniformGrid Columns="4"
                              Margin="0,0,0,25">
 
                     <Border Background="White"
@@ -206,6 +206,25 @@
                             <TextBlock x:Name="CompletedTasksText"
                                        Text="0"
                                        Foreground="#16A34A"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="White"
+                            CornerRadius="10"
+                            Padding="20"
+                            Margin="12,0,0,0">
+
+                        <StackPanel>
+                            <TextBlock Text="Просрочено"
+                                       Foreground="#64748B"
+                                       FontSize="13"/>
+
+                            <TextBlock x:Name="OverdueTasksText"
+                                       Text="0"
+                                       Foreground="#EF4444"
                                        FontSize="28"
                                        FontWeight="Bold"
                                        Margin="0,8,0,0"/>

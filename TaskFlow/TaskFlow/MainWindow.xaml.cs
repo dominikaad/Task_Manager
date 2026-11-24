@@ -388,7 +388,8 @@ namespace TaskFlow
         {
             if (TotalTasksText == null ||
                 ActiveTasksText == null ||
-                CompletedTasksText == null)
+                CompletedTasksText == null ||
+                OverdueTasksText == null)
             {
                 return;
             }
@@ -399,11 +400,15 @@ namespace TaskFlow
 
             int active = total - completed;
 
+            int overdue = Tasks.Count(task => task.IsOverdue);
+
             TotalTasksText.Text = total.ToString();
 
             ActiveTasksText.Text = active.ToString();
 
             CompletedTasksText.Text = completed.ToString();
+
+            OverdueTasksText.Text = overdue.ToString();
         }
     }
 
