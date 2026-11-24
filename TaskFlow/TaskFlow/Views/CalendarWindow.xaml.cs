@@ -18,8 +18,8 @@ namespace TaskFlow.Views
         public ObservableCollection<TaskItem> SelectedTasks { get; set; }
 
         private DateTime CurrentMonth;
-
         private DateTime SelectedDate;
+        private string _calendarMode = "Месяц";
 
         public CalendarWindow(ObservableCollection<TaskItem> tasks)
         {
@@ -49,46 +49,87 @@ namespace TaskFlow.Views
         // ==========================================
 
 
+
         private void BuildCalendar()
         {
             CalendarGrid.Children.Clear();
 
             CultureInfo culture = new CultureInfo("ru-RU");
 
-            MonthTitle.Text = culture.TextInfo.ToTitleCase(
-                CurrentMonth.ToString("MMMM yyyy", culture));
+            // Определяем количество ячеек и начало периода
+            DateTime startDate;
+            int cellCount;
 
-            DateTime firstDay = CurrentMonth;
-
-            int startOffset = ((int)firstDay.DayOfWeek + 6) % 7;
-
-            // Названия приоритетов и соответствующие цвета
-            string[] priorities =
+            if (_calendarMode == "Месяц")
             {
-        "Низкий",
-        "Средний",
-        "Высокий",
-        "Критический"
-    };
+                startDate = new DateTime(
+                    CurrentMonth.Year,
+                    CurrentMonth.Month,
+                    1);
+
+                int offset = ((int)startDate.DayOfWeek + 6) % 7;
+
+                startDate = startDate.AddDays(-offset);
+
+                cellCount = 42;
+
+                CalendarGrid.Columns = 7;
+                CalendarGrid.Rows = 6;
+
+                WeekdayHeader.Visibility = Visibility.Visible;
+
+                MonthTitle.Text = culture.TextInfo.ToTitleCase(
+                    CurrentMonth.ToString("MMMM yyyy", culture));
+            }
+            else if (_calendarMode == "Неделя")
+            {
+                int offset = ((int)SelectedDate.DayOfWeek + 6) % 7;
+
+                startDate = SelectedDate.Date.AddDays(-offset);
+
+                cellCount = 7;
+
+                CalendarGrid.Columns = 7;
+                CalendarGrid.Rows = 1;
+
+                WeekdayHeader.Visibility = Visibility.Visible;
+
+                DateTime endDate = startDate.AddDays(6);
+
+                MonthTitle.Text =
+                    $"{startDate:dd.MM.yyyy} — {endDate:dd.MM.yyyy}";
+            }
+            else
+            {
+                startDate = SelectedDate.Date;
+
+                cellCount = 1;
+
+                CalendarGrid.Columns = 1;
+                CalendarGrid.Rows = 1;
+
+                WeekdayHeader.Visibility = Visibility.Collapsed;
+
+                MonthTitle.Text = culture.TextInfo.ToTitleCase(
+                    SelectedDate.ToString("dd MMMM yyyy", culture));
+            }
+
+            // Цвета приоритетов
+            string[] priorities =
+            {"Низкий", "Средний", "Высокий", "Критический"};
 
             Color[] priorityColors =
+            {Color.FromRgb(34, 197, 94), Color.FromRgb(59, 130, 246), Color.FromRgb(249, 115, 22), Color.FromRgb(239, 68, 68)};
+
+            // Создание ячеек календаря
+            for (int i = 0; i < cellCount; i++)
             {
-        Color.FromRgb(34, 197, 94),   // Зеленый
-        Color.FromRgb(59, 130, 246),  // Синий
-        Color.FromRgb(249, 115, 22),  // Оранжевый
-        Color.FromRgb(239, 68, 68)    // Красный
-    };
+                DateTime date = startDate.AddDays(i);
 
-            // Создаем 42 ячейки календаря
-            for (int i = 0; i < 42; i++)
-            {
-                int dayNumber = i - startOffset + 1;
+                bool isCurrentMonth =
+                    date.Month == CurrentMonth.Month &&
+                    date.Year == CurrentMonth.Year;
 
-                DateTime date = firstDay.AddDays(dayNumber - 1);
-
-                bool isCurrentMonth = date.Month == CurrentMonth.Month;
-
-                // Получаем задачи на конкретную дату
                 var tasksForDate = _allTasks
                     .Where(task =>
                         task.Deadline.HasValue &&
@@ -101,20 +142,15 @@ namespace TaskFlow.Views
                     Padding = new Thickness(4),
                     MinHeight = 50,
                     Tag = date,
-                    IsEnabled = isCurrentMonth,
+                    IsEnabled = _calendarMode != "Месяц" || isCurrentMonth,
                     Cursor = Cursors.Hand,
                     BorderThickness = new Thickness(1),
                     BorderBrush = new SolidColorBrush(
                         Color.FromRgb(226, 232, 240))
                 };
 
-                // Оформление ячеек
-                if (!isCurrentMonth)
-                {
-                    dayButton.Background = Brushes.Transparent;
-                    dayButton.BorderThickness = new Thickness(0);
-                }
-                else if (date.Date == SelectedDate.Date)
+                // Оформление выбранной даты
+                if (date.Date == SelectedDate.Date)
                 {
                     dayButton.Background = new SolidColorBrush(
                         Color.FromRgb(224, 231, 255));
@@ -127,7 +163,6 @@ namespace TaskFlow.Views
                     dayButton.Background = Brushes.White;
                 }
 
-                // Контейнер содержимого ячейки
                 StackPanel content = new StackPanel
                 {
                     HorizontalAlignment = HorizontalAlignment.Center,
@@ -137,7 +172,7 @@ namespace TaskFlow.Views
                 // Номер дня
                 TextBlock dayText = new TextBlock
                 {
-                    Text = isCurrentMonth ? date.Day.ToString() : "",
+                    Text = date.Day.ToString(),
                     FontSize = 16,
                     FontWeight = FontWeights.SemiBold,
 
@@ -151,33 +186,28 @@ namespace TaskFlow.Views
                 content.Children.Add(dayText);
 
                 // Количество задач
-                if (isCurrentMonth && tasksForDate.Count > 0)
+                if (tasksForDate.Count > 0)
                 {
                     TextBlock countText = new TextBlock
                     {
-                        Text = tasksForDate.Count == 1
-                            ? "1 задача"
-                            : $"{tasksForDate.Count} задач",
-
+                        Text = $"Задач: {tasksForDate.Count}",
                         FontSize = 10,
 
                         Foreground = new SolidColorBrush(
                             Color.FromRgb(99, 102, 241)),
 
                         HorizontalAlignment = HorizontalAlignment.Center,
-
                         Margin = new Thickness(0, 3, 0, 2)
                     };
 
                     content.Children.Add(countText);
 
-                    // Контейнер цветных индикаторов
+                    // Цветные индикаторы приоритетов
                     WrapPanel indicators = new WrapPanel
                     {
                         HorizontalAlignment = HorizontalAlignment.Center
                     };
 
-                    // Проверяем наличие задач каждого приоритета
                     for (int j = 0; j < priorities.Length; j++)
                     {
                         bool hasPriority = tasksForDate.Any(task =>
@@ -192,9 +222,7 @@ namespace TaskFlow.Views
                             {
                                 Width = 7,
                                 Height = 7,
-
                                 Fill = new SolidColorBrush(priorityColors[j]),
-
                                 Margin = new Thickness(2)
                             };
 
@@ -211,27 +239,35 @@ namespace TaskFlow.Views
 
                 CalendarGrid.Children.Add(dayButton);
             }
+
+            UpdateModeButtons();
         }
+
 
 
         // ==========================================
         // ВЫБОР ДАТЫ
         // ==========================================
 
-        private void CalendarDay_Click(
-            object sender,
-            RoutedEventArgs e)
+
+        private void CalendarDay_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button &&
                 button.Tag is DateTime selectedDate)
             {
                 SelectedDate = selectedDate;
 
+                CurrentMonth = new DateTime(
+                    selectedDate.Year,
+                    selectedDate.Month,
+                    1);
+
                 BuildCalendar();
 
                 UpdateSelectedTasks();
             }
         }
+
 
         // ==========================================
         // ОБНОВЛЕНИЕ СПИСКА ЗАДАЧ
@@ -266,29 +302,53 @@ namespace TaskFlow.Views
         // ПЕРЕКЛЮЧЕНИЕ МЕСЯЦЕВ
         // ==========================================
 
-        private void PreviousMonth_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            CurrentMonth = CurrentMonth.AddMonths(-1);
 
-            SelectedDate = CurrentMonth;
+        private void PreviousMonth_Click(object sender, RoutedEventArgs e)
+        {
+            if (_calendarMode == "Месяц")
+            {
+                CurrentMonth = CurrentMonth.AddMonths(-1);
+
+                SelectedDate = CurrentMonth;
+            }
+            else if (_calendarMode == "Неделя")
+            {
+                SelectedDate = SelectedDate.AddDays(-7);
+            }
+            else
+            {
+                SelectedDate = SelectedDate.AddDays(-1);
+            }
+
+            CurrentMonth = new DateTime(
+                SelectedDate.Year,
+                SelectedDate.Month,
+                1);
 
             BuildCalendar();
-
             UpdateSelectedTasks();
         }
 
-        private void NextMonth_Click(
-            object sender,
-            RoutedEventArgs e)
+        private void NextMonth_Click(object sender, RoutedEventArgs e)
         {
-            CurrentMonth = CurrentMonth.AddMonths(1);
+            if (_calendarMode == "Месяц")
+            {
+                CurrentMonth = CurrentMonth.AddMonths(1);
 
-            SelectedDate = CurrentMonth;
+                SelectedDate = CurrentMonth;
+            }
+            else if (_calendarMode == "Неделя")
+            {
+                SelectedDate = SelectedDate.AddDays(7);
+            }
+            else
+            {
+                SelectedDate = SelectedDate.AddDays(1);
+            }
+
+            CurrentMonth = new DateTime(SelectedDate.Year, SelectedDate.Month, 1);
 
             BuildCalendar();
-
             UpdateSelectedTasks();
         }
 
@@ -298,10 +358,7 @@ namespace TaskFlow.Views
             DateTime today = DateTime.Today;
 
             // Переключаем календарь на текущий месяц
-            CurrentMonth = new DateTime(
-                today.Year,
-                today.Month,
-                1);
+            CurrentMonth = new DateTime(today.Year, today.Month, 1);
 
             // Выбираем сегодняшний день
             SelectedDate = today;
@@ -312,6 +369,55 @@ namespace TaskFlow.Views
             // Обновляем список задач
             UpdateSelectedTasks();
         }
+        private void MonthMode_Click(object sender, RoutedEventArgs e)
+        {
+            _calendarMode = "Месяц";
+            BuildCalendar();
+            UpdateSelectedTasks();
+        }
 
+        private void WeekMode_Click(object sender, RoutedEventArgs e)
+        {
+            _calendarMode = "Неделя";
+            BuildCalendar();
+            UpdateSelectedTasks();
+        }
+
+        private void DayMode_Click(object sender, RoutedEventArgs e)
+        {
+            _calendarMode = "День";
+            BuildCalendar();
+            UpdateSelectedTasks();
+        }
+
+        private void UpdateModeButtons()
+        {
+            // Сбрасываем оформление всех кнопок
+            MonthModeButton.Background = Brushes.White;
+            MonthModeButton.Foreground =
+                new SolidColorBrush(Color.FromRgb(51, 65, 85));
+
+            WeekModeButton.Background = Brushes.White;
+            WeekModeButton.Foreground =
+                new SolidColorBrush(Color.FromRgb(51, 65, 85));
+
+            DayModeButton.Background = Brushes.White;
+            DayModeButton.Foreground =
+                new SolidColorBrush(Color.FromRgb(51, 65, 85));
+
+            // Выделяем активный режим
+            Button activeButton = _calendarMode switch
+            {
+                "Месяц" => MonthModeButton,
+                "Неделя" => WeekModeButton,
+                "День" => DayModeButton,
+                _ => MonthModeButton
+            };
+
+            activeButton.Background =
+                new SolidColorBrush(Color.FromRgb(79, 70, 229));
+
+            activeButton.Foreground = Brushes.White;
+        }
     }
 }

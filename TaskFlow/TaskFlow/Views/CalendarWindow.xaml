@@ -15,6 +15,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="180"/>
@@ -28,7 +29,7 @@
                    Foreground="#1E293B"
                    Margin="0,0,0,20"/>
 
-        <!-- Переключение месяцев -->
+        <!-- Переключение периодов -->
         <Grid Grid.Row="1"
               Margin="0,0,0,15">
 
@@ -39,80 +40,141 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Предыдущий месяц -->
+            <!-- Предыдущий период -->
             <Button Grid.Column="0"
-            Content="◀"
-            Width="40"
-            Height="35"
-            FontSize="16"
-            Background="White"
-            Foreground="#334155"
-            BorderBrush="#E2E8F0"
-            Cursor="Hand"
-            Click="PreviousMonth_Click"/>
+                    Content="◀"
+                    Width="40"
+                    Height="35"
+                    FontSize="16"
+                    Background="White"
+                    Foreground="#334155"
+                    BorderBrush="#E2E8F0"
+                    Cursor="Hand"
+                    Click="PreviousMonth_Click"/>
 
-            <!-- Название месяца -->
+            <!-- Название периода -->
             <TextBlock x:Name="MonthTitle"
-               Grid.Column="1"
-               FontSize="20"
-               FontWeight="SemiBold"
-               Foreground="#1E293B"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center"/>
+                       Grid.Column="1"
+                       FontSize="20"
+                       FontWeight="SemiBold"
+                       Foreground="#1E293B"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
 
-            <!-- Возврат к сегодняшней дате -->
+            <!-- Сегодня -->
             <Button Grid.Column="2"
-            Content="Сегодня"
-            Height="35"
-            Padding="15,0"
-            Margin="5,0"
-            FontSize="13"
-            FontWeight="SemiBold"
-            Background="#EEF2FF"
-            Foreground="#4F46E5"
-            BorderBrush="#C7D2FE"
-            Cursor="Hand"
-            Click="Today_Click"/>
+                    Content="Сегодня"
+                    Height="35"
+                    Padding="15,0"
+                    Margin="5,0"
+                    FontSize="13"
+                    FontWeight="SemiBold"
+                    Background="#EEF2FF"
+                    Foreground="#4F46E5"
+                    BorderBrush="#C7D2FE"
+                    Cursor="Hand"
+                    Click="Today_Click"/>
 
-            <!-- Следующий месяц -->
+            <!-- Следующий период -->
             <Button Grid.Column="3"
-            Content="▶"
-            Width="40"
-            Height="35"
-            FontSize="16"
-            Background="White"
-            Foreground="#334155"
-            BorderBrush="#E2E8F0"
-            Cursor="Hand"
-            Click="NextMonth_Click"/>
+                    Content="▶"
+                    Width="40"
+                    Height="35"
+                    FontSize="16"
+                    Background="White"
+                    Foreground="#334155"
+                    BorderBrush="#E2E8F0"
+                    Cursor="Hand"
+                    Click="NextMonth_Click"/>
 
         </Grid>
 
+        <!-- Переключение режимов календаря -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,15">
 
-        <!-- Дни недели -->
-        <UniformGrid Grid.Row="2"
+            <Button x:Name="MonthModeButton"
+                    Content="Месяц"
+                    Width="100"
+                    Height="34"
+                    Margin="4"
+                    Background="#4F46E5"
+                    Foreground="White"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Click="MonthMode_Click"/>
+
+            <Button x:Name="WeekModeButton"
+                    Content="Неделя"
+                    Width="100"
+                    Height="34"
+                    Margin="4"
+                    Background="White"
+                    Foreground="#334155"
+                    BorderBrush="#E2E8F0"
+                    Cursor="Hand"
+                    Click="WeekMode_Click"/>
+
+            <Button x:Name="DayModeButton"
+                    Content="День"
+                    Width="100"
+                    Height="34"
+                    Margin="4"
+                    Background="White"
+                    Foreground="#334155"
+                    BorderBrush="#E2E8F0"
+                    Cursor="Hand"
+                    Click="DayMode_Click"/>
+
+        </StackPanel>
+
+        <!-- Названия дней недели -->
+        <UniformGrid x:Name="WeekdayHeader"
+                     Grid.Row="3"
                      Columns="7"
                      Margin="0,0,0,8">
 
-            <TextBlock Text="Пн" HorizontalAlignment="Center"
-                       FontWeight="SemiBold" Foreground="#64748B"/>
-            <TextBlock Text="Вт" HorizontalAlignment="Center"
-                       FontWeight="SemiBold" Foreground="#64748B"/>
-            <TextBlock Text="Ср" HorizontalAlignment="Center"
-                       FontWeight="SemiBold" Foreground="#64748B"/>
-            <TextBlock Text="Чт" HorizontalAlignment="Center"
-                       FontWeight="SemiBold" Foreground="#64748B"/>
-            <TextBlock Text="Пт" HorizontalAlignment="Center"
-                       FontWeight="SemiBold" Foreground="#64748B"/>
-            <TextBlock Text="Сб" HorizontalAlignment="Center"
-                       FontWeight="SemiBold" Foreground="#64748B"/>
-            <TextBlock Text="Вс" HorizontalAlignment="Center"
-                       FontWeight="SemiBold" Foreground="#64748B"/>
+            <TextBlock Text="Пн"
+                       HorizontalAlignment="Center"
+                       FontWeight="SemiBold"
+                       Foreground="#64748B"/>
+
+            <TextBlock Text="Вт"
+                       HorizontalAlignment="Center"
+                       FontWeight="SemiBold"
+                       Foreground="#64748B"/>
+
+            <TextBlock Text="Ср"
+                       HorizontalAlignment="Center"
+                       FontWeight="SemiBold"
+                       Foreground="#64748B"/>
+
+            <TextBlock Text="Чт"
+                       HorizontalAlignment="Center"
+                       FontWeight="SemiBold"
+                       Foreground="#64748B"/>
+
+            <TextBlock Text="Пт"
+                       HorizontalAlignment="Center"
+                       FontWeight="SemiBold"
+                       Foreground="#64748B"/>
+
+            <TextBlock Text="Сб"
+                       HorizontalAlignment="Center"
+                       FontWeight="SemiBold"
+                       Foreground="#64748B"/>
+
+            <TextBlock Text="Вс"
+                       HorizontalAlignment="Center"
+                       FontWeight="SemiBold"
+                       Foreground="#64748B"/>
 
         </UniformGrid>
 
         <!-- Сетка календаря -->
-        <Border Grid.Row="3"
+        <Border Grid.Row="4"
                 Background="White"
                 BorderBrush="#E2E8F0"
                 BorderThickness="1"
@@ -127,15 +189,15 @@
 
         <!-- Заголовок списка задач -->
         <TextBlock x:Name="SelectedDateText"
-                   Grid.Row="4"
+                   Grid.Row="5"
                    Text="Задачи на выбранную дату"
                    FontSize="17"
                    FontWeight="SemiBold"
                    Foreground="#1E293B"
                    Margin="0,15,0,10"/>
 
-        <!-- Список задач выбранного дня -->
-        <Border Grid.Row="5"
+        <!-- Задачи выбранного дня -->
+        <Border Grid.Row="6"
                 Background="White"
                 BorderBrush="#E2E8F0"
                 BorderThickness="1"
@@ -183,6 +245,7 @@
                                                     Value="#334155"/>
 
                                             <Style.Triggers>
+
                                                 <DataTrigger Binding="{Binding IsCompleted}"
                                                              Value="True">
 
@@ -193,6 +256,7 @@
                                                             Value="Strikethrough"/>
 
                                                 </DataTrigger>
+
                                             </Style.Triggers>
 
                                         </Style>
@@ -200,7 +264,7 @@
 
                                 </TextBlock>
 
-                                <!-- Приоритет -->
+                                <!-- Приоритет задачи -->
                                 <TextBlock Grid.Column="2"
                                            Text="{Binding Priority}"
                                            FontSize="12"
