@@ -70,45 +70,25 @@
 
         </Grid>
 
-        <!-- Названия дней недели -->
+        <!-- Дни недели -->
         <UniformGrid Grid.Row="2"
                      Columns="7"
                      Margin="0,0,0,8">
 
-            <TextBlock Text="Пн"
-                       HorizontalAlignment="Center"
-                       FontWeight="SemiBold"
-                       Foreground="#64748B"/>
-
-            <TextBlock Text="Вт"
-                       HorizontalAlignment="Center"
-                       FontWeight="SemiBold"
-                       Foreground="#64748B"/>
-
-            <TextBlock Text="Ср"
-                       HorizontalAlignment="Center"
-                       FontWeight="SemiBold"
-                       Foreground="#64748B"/>
-
-            <TextBlock Text="Чт"
-                       HorizontalAlignment="Center"
-                       FontWeight="SemiBold"
-                       Foreground="#64748B"/>
-
-            <TextBlock Text="Пт"
-                       HorizontalAlignment="Center"
-                       FontWeight="SemiBold"
-                       Foreground="#64748B"/>
-
-            <TextBlock Text="Сб"
-                       HorizontalAlignment="Center"
-                       FontWeight="SemiBold"
-                       Foreground="#64748B"/>
-
-            <TextBlock Text="Вс"
-                       HorizontalAlignment="Center"
-                       FontWeight="SemiBold"
-                       Foreground="#64748B"/>
+            <TextBlock Text="Пн" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" Foreground="#64748B"/>
+            <TextBlock Text="Вт" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" Foreground="#64748B"/>
+            <TextBlock Text="Ср" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" Foreground="#64748B"/>
+            <TextBlock Text="Чт" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" Foreground="#64748B"/>
+            <TextBlock Text="Пт" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" Foreground="#64748B"/>
+            <TextBlock Text="Сб" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" Foreground="#64748B"/>
+            <TextBlock Text="Вс" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" Foreground="#64748B"/>
 
         </UniformGrid>
 
@@ -135,7 +115,7 @@
                    Foreground="#1E293B"
                    Margin="0,15,0,10"/>
 
-        <!-- Задачи выбранного дня -->
+        <!-- Список задач выбранного дня -->
         <Border Grid.Row="5"
                 Background="White"
                 BorderBrush="#E2E8F0"
@@ -158,17 +138,51 @@
                             <Grid>
 
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock Grid.Column="0"
+                                <!-- Отметка выполнения -->
+                                <CheckBox Grid.Column="0"
+                                          IsChecked="{Binding IsCompleted, Mode=TwoWay}"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,10,0"
+                                          Cursor="Hand"/>
+
+                                <!-- Название задачи -->
+                                <TextBlock Grid.Column="1"
                                            Text="{Binding Title}"
                                            FontSize="14"
                                            Foreground="#334155"
-                                           VerticalAlignment="Center"/>
+                                           VerticalAlignment="Center">
 
-                                <TextBlock Grid.Column="1"
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+
+                                            <Setter Property="Foreground"
+                                                    Value="#334155"/>
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCompleted}"
+                                                             Value="True">
+
+                                                    <Setter Property="Foreground"
+                                                            Value="#94A3B8"/>
+
+                                                    <Setter Property="TextDecorations"
+                                                            Value="Strikethrough"/>
+
+                                                </DataTrigger>
+                                            </Style.Triggers>
+
+                                        </Style>
+                                    </TextBlock.Style>
+
+                                </TextBlock>
+
+                                <!-- Приоритет -->
+                                <TextBlock Grid.Column="2"
                                            Text="{Binding Priority}"
                                            FontSize="12"
                                            Foreground="#6366F1"
