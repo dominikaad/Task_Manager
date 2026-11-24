@@ -187,14 +187,36 @@
 
         </Border>
 
-        <!-- Заголовок списка задач -->
-        <TextBlock x:Name="SelectedDateText"
-                   Grid.Row="5"
-                   Text="Задачи на выбранную дату"
-                   FontSize="17"
-                   FontWeight="SemiBold"
-                   Foreground="#1E293B"
-                   Margin="0,15,0,10"/>
+
+        <!-- Заголовок списка и фильтр задач -->
+        <Grid Grid.Row="5"
+              Margin="0,15,0,10">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock x:Name="SelectedDateText"
+               Grid.Column="0"
+               Text="Задачи на выбранную дату"
+               FontSize="17"
+               FontWeight="SemiBold"
+               Foreground="#1E293B"
+               VerticalAlignment="Center"/>
+
+            <CheckBox x:Name="ShowCompletedCheckBox"
+              Grid.Column="1"
+              Content="Показывать выполненные"
+              IsChecked="True"
+              VerticalAlignment="Center"
+              Foreground="#64748B"
+              FontSize="12"
+              Cursor="Hand"
+              Click="CompletedFilter_Click"/>
+
+        </Grid>
+
 
         <!-- Задачи выбранного дня -->
         <Border Grid.Row="6"

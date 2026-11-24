@@ -44,11 +44,14 @@ namespace TaskFlow.Views
             UpdateSelectedTasks();
         }
 
+        private void CompletedFilter_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateSelectedTasks();
+        }
+
         // ==========================================
         // ПОСТРОЕНИЕ КАЛЕНДАРЯ
         // ==========================================
-
-
 
         private void BuildCalendar()
         {
@@ -273,30 +276,47 @@ namespace TaskFlow.Views
         // ОБНОВЛЕНИЕ СПИСКА ЗАДАЧ
         // ==========================================
 
+
         private void UpdateSelectedTasks()
         {
+            // Очищаем предыдущий список
             SelectedTasks.Clear();
 
+            // Обновляем заголовок
             SelectedDateText.Text =
                 $"Задачи на {SelectedDate:dd.MM.yyyy}";
 
+            // Определяем, нужно ли показывать выполненные задачи
+            bool showCompleted = ShowCompletedCheckBox.IsChecked == true;
+
+            // Получаем задачи выбранной даты
             var tasksForDate = _allTasks
                 .Where(task =>
                     task.Deadline.HasValue &&
-                    task.Deadline.Value.Date == SelectedDate.Date
-                )
+                    task.Deadline.Value.Date == SelectedDate.Date &&
+                    (showCompleted || !task.IsCompleted))
                 .ToList();
 
+            // Добавляем задачи в отображаемый список
             foreach (var task in tasksForDate)
             {
                 SelectedTasks.Add(task);
             }
 
+            // Если задач нет, показываем соответствующее сообщение
             if (tasksForDate.Count == 0)
             {
-                SelectedDateText.Text += " — задач нет";
+                if (showCompleted)
+                {
+                    SelectedDateText.Text += " — задач нет";
+                }
+                else
+                {
+                    SelectedDateText.Text += " — активных задач нет";
+                }
             }
         }
+
 
         // ==========================================
         // ПЕРЕКЛЮЧЕНИЕ МЕСЯЦЕВ
