@@ -8,6 +8,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using TaskFlow.Models;
+using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace TaskFlow.Views
 {
@@ -26,6 +28,17 @@ namespace TaskFlow.Views
             InitializeComponent();
 
             _allTasks = tasks;
+            // Подписываемся на изменения коллекции задач
+            _allTasks.CollectionChanged += AllTasks_CollectionChanged;
+
+            // Подписываемся на изменения каждой существующей задачи
+            foreach (var task in _allTasks)
+            {
+                task.PropertyChanged += CalendarTask_PropertyChanged;
+            }
+
+            // Отписываемся от событий при закрытии окна
+            Closed += CalendarWindow_Closed;
 
             SelectedTasks = new ObservableCollection<TaskItem>();
 
@@ -42,6 +55,52 @@ namespace TaskFlow.Views
             BuildCalendar();
 
             UpdateSelectedTasks();
+        }
+
+        private void CalendarTask_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // Обновляем календарь и список выбранного дня
+            BuildCalendar();
+
+            // Пересчитываем статистику выбранной даты
+            UpdateSelectedTasks();
+        }
+        private void AllTasks_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            // Отписываемся от удалённых задач
+            if (e.OldItems != null)
+            {
+                foreach (TaskItem task in e.OldItems)
+                {
+                    task.PropertyChanged -= CalendarTask_PropertyChanged;
+                }
+            }
+
+            // Подписываемся на новые задачи
+            if (e.NewItems != null)
+            {
+                foreach (TaskItem task in e.NewItems)
+                {
+                    task.PropertyChanged += CalendarTask_PropertyChanged;
+                }
+            }
+
+            // Обновляем календарь
+            BuildCalendar();
+
+            // Обновляем список и статистику
+            UpdateSelectedTasks();
+        }
+        private void CalendarWindow_Closed(object? sender, EventArgs e)
+        {
+            // Отписываемся от изменений коллекции
+            _allTasks.CollectionChanged -= AllTasks_CollectionChanged;
+
+            // Отписываемся от изменений отдельных задач
+            foreach (var task in _allTasks)
+            {
+                task.PropertyChanged -= CalendarTask_PropertyChanged;
+            }
         }
 
         private void CompletedFilter_Click(object sender, RoutedEventArgs e)
