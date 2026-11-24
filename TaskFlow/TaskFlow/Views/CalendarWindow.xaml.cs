@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -7,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-
+using System.Windows.Shapes;
 using TaskFlow.Models;
 
 namespace TaskFlow.Views
@@ -49,47 +48,53 @@ namespace TaskFlow.Views
         // ПОСТРОЕНИЕ КАЛЕНДАРЯ
         // ==========================================
 
+
         private void BuildCalendar()
         {
             CalendarGrid.Children.Clear();
 
-            // Отображаем название месяца
             CultureInfo culture = new CultureInfo("ru-RU");
 
             MonthTitle.Text = culture.TextInfo.ToTitleCase(
-                CurrentMonth.ToString("MMMM yyyy", culture)
-            );
+                CurrentMonth.ToString("MMMM yyyy", culture));
 
-            // Первый день месяца
             DateTime firstDay = CurrentMonth;
 
-            // Количество дней в месяце
-            int daysInMonth = DateTime.DaysInMonth(
-                CurrentMonth.Year,
-                CurrentMonth.Month
-            );
-
-            // Определяем день недели.
-            // Понедельник = 0, воскресенье = 6.
             int startOffset = ((int)firstDay.DayOfWeek + 6) % 7;
 
-            // Создаём 42 ячейки (6 недель по 7 дней)
+            // Названия приоритетов и соответствующие цвета
+            string[] priorities =
+            {
+        "Низкий",
+        "Средний",
+        "Высокий",
+        "Критический"
+    };
+
+            Color[] priorityColors =
+            {
+        Color.FromRgb(34, 197, 94),   // Зеленый
+        Color.FromRgb(59, 130, 246),  // Синий
+        Color.FromRgb(249, 115, 22),  // Оранжевый
+        Color.FromRgb(239, 68, 68)    // Красный
+    };
+
+            // Создаем 42 ячейки календаря
             for (int i = 0; i < 42; i++)
             {
                 int dayNumber = i - startOffset + 1;
 
                 DateTime date = firstDay.AddDays(dayNumber - 1);
 
-                bool isCurrentMonth =
-                    date.Month == CurrentMonth.Month;
+                bool isCurrentMonth = date.Month == CurrentMonth.Month;
 
-                // Количество задач на выбранную дату
-                int taskCount = _allTasks.Count(task =>
-                    task.Deadline.HasValue &&
-                    task.Deadline.Value.Date == date.Date
-                );
+                // Получаем задачи на конкретную дату
+                var tasksForDate = _allTasks
+                    .Where(task =>
+                        task.Deadline.HasValue &&
+                        task.Deadline.Value.Date == date.Date)
+                    .ToList();
 
-                // Создаём кнопку дня
                 Button dayButton = new Button
                 {
                     Margin = new Thickness(3),
@@ -100,11 +105,10 @@ namespace TaskFlow.Views
                     Cursor = Cursors.Hand,
                     BorderThickness = new Thickness(1),
                     BorderBrush = new SolidColorBrush(
-                        Color.FromRgb(226, 232, 240)
-                    )
+                        Color.FromRgb(226, 232, 240))
                 };
 
-                // Фон ячейки
+                // Оформление ячеек
                 if (!isCurrentMonth)
                 {
                     dayButton.Background = Brushes.Transparent;
@@ -113,33 +117,30 @@ namespace TaskFlow.Views
                 else if (date.Date == SelectedDate.Date)
                 {
                     dayButton.Background = new SolidColorBrush(
-                        Color.FromRgb(224, 231, 255)
-                    );
+                        Color.FromRgb(224, 231, 255));
 
                     dayButton.BorderBrush = new SolidColorBrush(
-                        Color.FromRgb(99, 102, 241)
-                    );
+                        Color.FromRgb(99, 102, 241));
                 }
                 else
                 {
                     dayButton.Background = Brushes.White;
                 }
 
-                // Содержимое ячейки
+                // Контейнер содержимого ячейки
                 StackPanel content = new StackPanel
                 {
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
 
+                // Номер дня
                 TextBlock dayText = new TextBlock
                 {
-                    Text = isCurrentMonth
-                        ? date.Day.ToString()
-                        : "",
-
+                    Text = isCurrentMonth ? date.Day.ToString() : "",
                     FontSize = 16,
                     FontWeight = FontWeights.SemiBold,
+
                     Foreground = date.Date == DateTime.Today
                         ? new SolidColorBrush(Color.FromRgb(79, 70, 229))
                         : new SolidColorBrush(Color.FromRgb(30, 41, 59)),
@@ -149,27 +150,59 @@ namespace TaskFlow.Views
 
                 content.Children.Add(dayText);
 
-                // Показываем количество задач
-                if (isCurrentMonth && taskCount > 0)
+                // Количество задач
+                if (isCurrentMonth && tasksForDate.Count > 0)
                 {
                     TextBlock countText = new TextBlock
                     {
-                        Text = taskCount == 1
+                        Text = tasksForDate.Count == 1
                             ? "1 задача"
-                            : $"{taskCount} задач",
+                            : $"{tasksForDate.Count} задач",
 
                         FontSize = 10,
 
                         Foreground = new SolidColorBrush(
-                            Color.FromRgb(99, 102, 241)
-                        ),
+                            Color.FromRgb(99, 102, 241)),
 
                         HorizontalAlignment = HorizontalAlignment.Center,
 
-                        Margin = new Thickness(0, 4, 0, 0)
+                        Margin = new Thickness(0, 3, 0, 2)
                     };
 
                     content.Children.Add(countText);
+
+                    // Контейнер цветных индикаторов
+                    WrapPanel indicators = new WrapPanel
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    };
+
+                    // Проверяем наличие задач каждого приоритета
+                    for (int j = 0; j < priorities.Length; j++)
+                    {
+                        bool hasPriority = tasksForDate.Any(task =>
+                            string.Equals(
+                                task.Priority?.ToString(),
+                                priorities[j],
+                                StringComparison.OrdinalIgnoreCase));
+
+                        if (hasPriority)
+                        {
+                            Ellipse indicator = new Ellipse
+                            {
+                                Width = 7,
+                                Height = 7,
+
+                                Fill = new SolidColorBrush(priorityColors[j]),
+
+                                Margin = new Thickness(2)
+                            };
+
+                            indicators.Children.Add(indicator);
+                        }
+                    }
+
+                    content.Children.Add(indicators);
                 }
 
                 dayButton.Content = content;
@@ -179,6 +212,7 @@ namespace TaskFlow.Views
                 CalendarGrid.Children.Add(dayButton);
             }
         }
+
 
         // ==========================================
         // ВЫБОР ДАТЫ
