@@ -7,7 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-
 using TaskFlow.Models;
 using TaskFlow.Services;
 using TaskFlow.Views;
@@ -19,6 +18,21 @@ namespace TaskFlow
         public ObservableCollection<TaskItem> Tasks { get; set; }
 
         private ICollectionView? _tasksView;
+
+        // ==========================================
+        // ОТКРЫТИЕ КАЛЕНДАРЯ
+        // ==========================================
+
+        private void OpenCalendar_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            CalendarWindow calendarWindow = new CalendarWindow(Tasks);
+
+            calendarWindow.Owner = this;
+
+            calendarWindow.ShowDialog();
+        }
 
         public MainWindow()
         {

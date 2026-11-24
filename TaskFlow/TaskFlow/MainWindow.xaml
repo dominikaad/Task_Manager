@@ -102,10 +102,16 @@
                                FontWeight="SemiBold"/>
                 </Border>
 
-                <TextBlock Text="Календарь"
-                           Foreground="#CBD5E1"
-                           FontSize="15"
-                           Margin="12,12"/>
+                <Button Content="Календарь"
+                        Foreground="#CBD5E1"
+                        Background="Transparent"
+                        FontSize="15"
+                        HorizontalContentAlignment="Left"
+                        Padding="12"
+                        Margin="0,5"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Click="OpenCalendar_Click"/>
 
                 <TextBlock Text="События"
                            Foreground="#CBD5E1"
