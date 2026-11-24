@@ -291,5 +291,27 @@ namespace TaskFlow.Views
 
             UpdateSelectedTasks();
         }
+
+        private void Today_Click(object sender, RoutedEventArgs e)
+        {
+            // Получаем сегодняшнюю дату
+            DateTime today = DateTime.Today;
+
+            // Переключаем календарь на текущий месяц
+            CurrentMonth = new DateTime(
+                today.Year,
+                today.Month,
+                1);
+
+            // Выбираем сегодняшний день
+            SelectedDate = today;
+
+            // Перестраиваем календарь
+            BuildCalendar();
+
+            // Обновляем список задач
+            UpdateSelectedTasks();
+        }
+
     }
 }

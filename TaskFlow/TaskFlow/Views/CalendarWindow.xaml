@@ -36,39 +36,58 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
+            <!-- Предыдущий месяц -->
             <Button Grid.Column="0"
-                    Content="◀"
-                    Width="40"
-                    Height="35"
-                    FontSize="16"
-                    Background="White"
-                    Foreground="#334155"
-                    BorderBrush="#E2E8F0"
-                    Cursor="Hand"
-                    Click="PreviousMonth_Click"/>
+            Content="◀"
+            Width="40"
+            Height="35"
+            FontSize="16"
+            Background="White"
+            Foreground="#334155"
+            BorderBrush="#E2E8F0"
+            Cursor="Hand"
+            Click="PreviousMonth_Click"/>
 
+            <!-- Название месяца -->
             <TextBlock x:Name="MonthTitle"
-                       Grid.Column="1"
-                       FontSize="20"
-                       FontWeight="SemiBold"
-                       Foreground="#1E293B"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
+               Grid.Column="1"
+               FontSize="20"
+               FontWeight="SemiBold"
+               Foreground="#1E293B"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"/>
 
+            <!-- Возврат к сегодняшней дате -->
             <Button Grid.Column="2"
-                    Content="▶"
-                    Width="40"
-                    Height="35"
-                    FontSize="16"
-                    Background="White"
-                    Foreground="#334155"
-                    BorderBrush="#E2E8F0"
-                    Cursor="Hand"
-                    Click="NextMonth_Click"/>
+            Content="Сегодня"
+            Height="35"
+            Padding="15,0"
+            Margin="5,0"
+            FontSize="13"
+            FontWeight="SemiBold"
+            Background="#EEF2FF"
+            Foreground="#4F46E5"
+            BorderBrush="#C7D2FE"
+            Cursor="Hand"
+            Click="Today_Click"/>
+
+            <!-- Следующий месяц -->
+            <Button Grid.Column="3"
+            Content="▶"
+            Width="40"
+            Height="35"
+            FontSize="16"
+            Background="White"
+            Foreground="#334155"
+            BorderBrush="#E2E8F0"
+            Cursor="Hand"
+            Click="NextMonth_Click"/>
 
         </Grid>
+
 
         <!-- Дни недели -->
         <UniformGrid Grid.Row="2"
