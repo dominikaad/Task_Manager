@@ -209,18 +209,40 @@ namespace TaskFlow.Views
                         Color.FromRgb(226, 232, 240))
                 };
 
-                // Оформление выбранной даты
-                if (date.Date == SelectedDate.Date)
+                // Проверяем, является ли дата сегодняшней
+                bool isToday = date.Date == DateTime.Today;
+
+                // Проверяем, является ли дата выбранной
+                bool isSelected = date.Date == SelectedDate.Date;
+
+                // Базовое оформление кнопки
+                dayButton.Background = Brushes.White;
+
+                // Выделение сегодняшней даты
+                if (isToday)
                 {
                     dayButton.Background = new SolidColorBrush(
-                        Color.FromRgb(224, 231, 255));
+                        Color.FromArgb(100, 139, 246, 255));
 
                     dayButton.BorderBrush = new SolidColorBrush(
-                        Color.FromRgb(99, 102, 241));
+                        Color.FromArgb(180, 147, 197, 253));
+
+                    dayButton.BorderThickness = new Thickness(1.5);
                 }
-                else
+
+                // Выделение выбранной даты
+                if (isSelected)
                 {
-                    dayButton.Background = Brushes.White;
+                    dayButton.Background = new SolidColorBrush(
+                        Color.FromArgb(120, 56, 189, 248));
+
+                    // Если выбран сегодняшний день,
+                    // используем золотистую рамку
+                    dayButton.BorderBrush = isToday
+                        ? new SolidColorBrush(Color.FromRgb(251, 191, 36))
+                        : new SolidColorBrush(Color.FromArgb(200, 2, 132, 199));
+
+                    dayButton.BorderThickness = new Thickness(1.5);
                 }
 
                 StackPanel content = new StackPanel
@@ -236,9 +258,13 @@ namespace TaskFlow.Views
                     FontSize = 16,
                     FontWeight = FontWeights.SemiBold,
 
-                    Foreground = date.Date == DateTime.Today
-                        ? new SolidColorBrush(Color.FromRgb(79, 70, 229))
-                        : new SolidColorBrush(Color.FromRgb(30, 41, 59)),
+                    // Для выбранной даты используем белый цвет
+                    // Для сегодняшней даты — синий
+                    Foreground = isSelected
+                        ? Brushes.White
+                        : isToday
+                            ? new SolidColorBrush(Color.FromRgb(37, 99, 235))
+                            : new SolidColorBrush(Color.FromRgb(30, 41, 59)),
 
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
@@ -254,7 +280,7 @@ namespace TaskFlow.Views
                         FontSize = 10,
 
                         Foreground = new SolidColorBrush(
-                            Color.FromRgb(99, 102, 241)),
+                            Color.FromRgb(51, 65, 85)),
 
                         HorizontalAlignment = HorizontalAlignment.Center,
                         Margin = new Thickness(0, 3, 0, 2)
