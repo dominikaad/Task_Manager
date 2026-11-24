@@ -2,12 +2,70 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="TaskFlow"
-        Height="760"
-        Width="1100"
-        MinHeight="600"
-        MinWidth="850"
+        Height="800"
+        Width="1200"
+        MinHeight="650"
+        MinWidth="950"
         WindowStartupLocation="CenterScreen"
-        Background="#F3F5F9">
+        Background="#F4F6FA">
+
+    <Window.Resources>
+
+        <!-- Основной стиль кнопок -->
+        <Style x:Key="MainButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#6366F1"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="16,9"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="7"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль дополнительных кнопок -->
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#EEF2FF"/>
+            <Setter Property="Foreground" Value="#4F46E5"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Стиль ComboBox -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="7,5"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <!-- Стиль TextBox -->
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="9,7"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+    </Window.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -15,413 +73,454 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Боковая панель -->
+        <!-- БОКОВАЯ ПАНЕЛЬ -->
         <Border Grid.Column="0"
-                Background="#202B3C">
+                Background="#1E293B">
 
-            <StackPanel Margin="25">
+            <StackPanel Margin="20">
 
                 <TextBlock Text="TaskFlow"
-                           FontSize="28"
-                           FontWeight="Bold"
                            Foreground="White"
-                           Margin="0,15,0,45"/>
+                           FontSize="27"
+                           FontWeight="Bold"
+                           Margin="0,15,0,40"/>
 
-                <TextBlock Text="РАБОЧЕЕ ПРОСТРАНСТВО"
+                <TextBlock Text="МЕНЮ"
+                           Foreground="#94A3B8"
                            FontSize="11"
-                           Foreground="#91A0B5"
+                           FontWeight="Bold"
                            Margin="0,0,0,15"/>
 
-                <Border Background="#34445B"
+                <Border Background="#334155"
                         CornerRadius="8"
                         Padding="12"
-                        Margin="0,0,0,10">
+                        Margin="0,0,0,8">
 
-                    <TextBlock Text="✓   Мои задачи"
+                    <TextBlock Text="Мои задачи"
+                               Foreground="White"
                                FontSize="15"
-                               Foreground="White"/>
+                               FontWeight="SemiBold"/>
                 </Border>
 
                 <TextBlock Text="Календарь"
+                           Foreground="#CBD5E1"
                            FontSize="15"
-                           Foreground="#C4CEDB"
                            Margin="12,12"/>
 
                 <TextBlock Text="События"
+                           Foreground="#CBD5E1"
                            FontSize="15"
-                           Foreground="#C4CEDB"
                            Margin="12,12"/>
 
                 <TextBlock Text="Статистика"
+                           Foreground="#CBD5E1"
                            FontSize="15"
-                           Foreground="#C4CEDB"
                            Margin="12,12"/>
 
                 <TextBlock Text="Настройки"
+                           Foreground="#CBD5E1"
                            FontSize="15"
-                           Foreground="#C4CEDB"
                            Margin="12,12"/>
 
-                <TextBlock Text="Версия 0.1"
-                           FontSize="12"
-                           Foreground="#91A0B5"
-                           Margin="0,60,0,0"/>
+                <TextBlock Text=" "
+                           VerticalAlignment="Stretch"/>
+
+                <TextBlock Text="Версия 1.0"
+                           Foreground="#64748B"
+                           FontSize="11"
+                           Margin="0,30,0,5"/>
 
             </StackPanel>
         </Border>
 
-        <!-- Основная рабочая область -->
-        <Border Grid.Column="1"
-                Padding="35">
+        <!-- ОСНОВНАЯ РАБОЧАЯ ОБЛАСТЬ -->
+        <ScrollViewer Grid.Column="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
 
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="35,25,35,35">
 
-                <StackPanel>
+                <!-- ЗАГОЛОВОК -->
+                <TextBlock Text="Мои задачи"
+                           FontSize="29"
+                           FontWeight="Bold"
+                           Foreground="#1E293B"/>
 
-                    <!-- Заголовок -->
-                    <TextBlock Text="Мои задачи"
-                               FontSize="30"
-                               FontWeight="Bold"
-                               Foreground="#202B3C"/>
+                <TextBlock Text="Управляйте своими задачами и следите за сроками"
+                           FontSize="13"
+                           Foreground="#64748B"
+                           Margin="0,7,0,25"/>
 
-                    <TextBlock Text="Планируйте свои дела и следите за их выполнением"
-                               FontSize="14"
-                               Foreground="#788397"
-                               Margin="0,8,0,30"/>
+                <!-- СТАТИСТИКА -->
+                <UniformGrid Columns="3"
+                             Margin="0,0,0,25">
 
-                    <!-- Статистика -->
-                    <Grid Margin="0,0,0,30">
+                    <Border Background="White"
+                            CornerRadius="10"
+                            Padding="20"
+                            Margin="0,0,12,0">
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="Всего задач"
+                                       Foreground="#64748B"
+                                       FontSize="13"/>
 
-                        <!-- Всего задач -->
-                        <Border Grid.Column="0"
-                                Background="White"
-                                CornerRadius="10"
-                                Padding="18"
-                                Margin="0,0,10,0">
+                            <TextBlock x:Name="TotalTasksText"
+                                       Text="0"
+                                       Foreground="#1E293B"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
 
-                            <StackPanel>
-                                <TextBlock Text="Всего задач"
-                                           Foreground="#788397"
-                                           FontSize="13"/>
+                    <Border Background="White"
+                            CornerRadius="10"
+                            Padding="20"
+                            Margin="6,0">
 
-                                <TextBlock x:Name="TotalCountText"
-                                           Text="0"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="#202B3C"
-                                           Margin="0,8,0,0"/>
-                            </StackPanel>
-                        </Border>
+                        <StackPanel>
+                            <TextBlock Text="Активные"
+                                       Foreground="#64748B"
+                                       FontSize="13"/>
 
-                        <!-- Активные задачи -->
-                        <Border Grid.Column="1"
-                                Background="White"
-                                CornerRadius="10"
-                                Padding="18"
-                                Margin="5,0">
+                            <TextBlock x:Name="ActiveTasksText"
+                                       Text="0"
+                                       Foreground="#D97706"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
 
-                            <StackPanel>
-                                <TextBlock Text="Активные"
-                                           Foreground="#788397"
-                                           FontSize="13"/>
+                    <Border Background="White"
+                            CornerRadius="10"
+                            Padding="20"
+                            Margin="12,0,0,0">
 
-                                <TextBlock x:Name="ActiveCountText"
-                                           Text="0"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="#D58B35"
-                                           Margin="0,8,0,0"/>
-                            </StackPanel>
-                        </Border>
+                        <StackPanel>
+                            <TextBlock Text="Выполнено"
+                                       Foreground="#64748B"
+                                       FontSize="13"/>
 
-                        <!-- Выполненные задачи -->
-                        <Border Grid.Column="2"
-                                Background="White"
-                                CornerRadius="10"
-                                Padding="18"
-                                Margin="10,0,0,0">
+                            <TextBlock x:Name="CompletedTasksText"
+                                       Text="0"
+                                       Foreground="#16A34A"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
 
-                            <StackPanel>
-                                <TextBlock Text="Выполнено"
-                                           Foreground="#788397"
-                                           FontSize="13"/>
+                </UniformGrid>
 
-                                <TextBlock x:Name="CompletedCountText"
-                                           Text="0"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="#299B72"
-                                           Margin="0,8,0,0"/>
-                            </StackPanel>
-                        </Border>
+                <!-- ДОБАВЛЕНИЕ ЗАДАЧИ -->
+                <Border Background="White"
+                        CornerRadius="10"
+                        Padding="20"
+                        Margin="0,0,0,25">
 
-                    </Grid>
+                    <StackPanel>
 
-                    <!-- Добавление задачи -->
-                    <TextBlock Text="Добавить новую задачу"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="#202B3C"
-                               Margin="0,0,0,12"/>
+                        <TextBlock Text="Добавить новую задачу"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="#1E293B"
+                                   Margin="0,0,0,15"/>
 
-                    <Grid Margin="0,0,0,30">
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="125"/>
-                            <ColumnDefinition Width="145"/>
-                            <ColumnDefinition Width="120"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Название задачи -->
-                        <TextBox x:Name="TaskTitleInput"
-                                 Grid.Column="0"
-                                 Height="43"
-                                 FontSize="14"
-                                 Padding="12,8"
-                                 VerticalContentAlignment="Center"
-                                 ToolTip="Введите название задачи"/>
-
-                        <!-- Выбор приоритета -->
-                        <ComboBox x:Name="TaskPriorityInput"
-                                  Grid.Column="1"
-                                  Height="43"
-                                  Margin="10,0,0,0"
-                                  FontSize="13"
-                                  SelectedIndex="1"
-                                  VerticalContentAlignment="Center">
-
-                            <ComboBoxItem Content="Низкий"/>
-                            <ComboBoxItem Content="Средний"/>
-                            <ComboBoxItem Content="Высокий"/>
-                            <ComboBoxItem Content="Критический"/>
-
-                        </ComboBox>
-
-                        <!-- Выбор срока выполнения -->
-                        <DatePicker x:Name="TaskDeadlineInput"
-                                    Grid.Column="2"
-                                    Height="43"
-                                    Margin="10,0,0,0"
-                                    FontSize="13"
-                                    SelectedDateFormat="Short"
-                                    ToolTip="Выберите срок выполнения задачи"/>
-
-                        <!-- Кнопка добавления -->
-                        <Button Grid.Column="3"
-                                Content="+ Добавить"
-                                Height="43"
-                                Margin="10,0,0,0"
-                                Background="#536FE8"
-                                Foreground="White"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                BorderThickness="0"
-                                Cursor="Hand"
-                                Click="AddTask_Click"/>
-
-                    </Grid>
-
-                    <!-- Список задач -->
-                    <TextBlock Text="Список задач"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="#202B3C"
-                               Margin="0,0,0,15"/>
-
-                    <!-- Поиск и фильтрация -->
-                    <StackPanel Margin="0,0,0,20">
-
-                        <!-- Поиск по названию -->
-                        <TextBox x:Name="SearchInput"
-                                 Height="40"
-                                 Padding="12,8"
-                                 FontSize="14"
-                                 VerticalContentAlignment="Center"
-                                 ToolTip="Поиск по названию задачи"
-                                 TextChanged="SearchInput_TextChanged"/>
-
-                        <Grid Margin="0,10,0,0">
-
+                        <Grid>
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="15"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Фильтр по приоритету -->
-                            <ComboBox x:Name="PriorityFilter"
-                                      Grid.Column="0"
-                                      Height="38"
-                                      Margin="0,0,5,0"
-                                      SelectedIndex="0"
-                                      SelectionChanged="Filter_SelectionChanged">
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Название задачи"
+                                           FontSize="12"
+                                           Foreground="#64748B"
+                                           Margin="0,0,0,6"/>
 
-                                <ComboBoxItem Content="Все приоритеты"/>
-                                <ComboBoxItem Content="Низкий"/>
-                                <ComboBoxItem Content="Средний"/>
-                                <ComboBoxItem Content="Высокий"/>
-                                <ComboBoxItem Content="Критический"/>
+                                <TextBox x:Name="TaskTitleInput"
+                                         Height="38"/>
+                            </StackPanel>
 
-                            </ComboBox>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Приоритет"
+                                           FontSize="12"
+                                           Foreground="#64748B"
+                                           Margin="0,0,0,6"/>
 
-                            <!-- Фильтр по статусу -->
-                            <ComboBox x:Name="StatusFilter"
-                                      Grid.Column="1"
-                                      Height="38"
-                                      Margin="5,0,0,0"
-                                      SelectedIndex="0"
-                                      SelectionChanged="Filter_SelectionChanged">
+                                <ComboBox x:Name="TaskPriorityInput"
+                                          SelectedIndex="1">
 
-                                <ComboBoxItem Content="Все задачи"/>
-                                <ComboBoxItem Content="Активные"/>
-                                <ComboBoxItem Content="Выполненные"/>
+                                    <ComboBoxItem Content="Низкий"/>
+                                    <ComboBoxItem Content="Средний"/>
+                                    <ComboBoxItem Content="Высокий"/>
+                                    <ComboBoxItem Content="Критический"/>
 
-                            </ComboBox>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Срок выполнения"
+                                           FontSize="12"
+                                           Foreground="#64748B"
+                                           Margin="0,0,0,6"/>
+
+                                <DatePicker x:Name="TaskDeadlineInput"
+                                            Height="38"
+                                            FontSize="13"/>
+                            </StackPanel>
 
                         </Grid>
+
+                        <Button Content="Добавить задачу"
+                                Style="{StaticResource MainButtonStyle}"
+                                HorizontalAlignment="Left"
+                                Margin="0,18,0,0"
+                                Click="AddTask_Click"/>
+
                     </StackPanel>
+                </Border>
 
-                    <!-- Список задач -->
-                    <ListView x:Name="TasksList"
-                              ItemsSource="{Binding Tasks}"
-                              Background="Transparent"
-                              BorderThickness="0"
-                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <!-- ПОИСК И ФИЛЬТРАЦИЯ -->
+                <Border Background="White"
+                        CornerRadius="10"
+                        Padding="20"
+                        Margin="0,0,0,20">
 
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
+                    <StackPanel>
 
-                                <Setter Property="Padding" Value="0"/>
+                        <TextBlock Text="Поиск и фильтрация"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="#1E293B"
+                                   Margin="0,0,0,15"/>
 
-                                <Setter Property="Margin"
-                                        Value="0,0,0,10"/>
+                        <TextBox x:Name="SearchInput"
+                                 Height="38"
+                                 FontSize="13"
+                                 Margin="0,0,0,12"
+                                 ToolTip="Введите название задачи"
+                                 TextChanged="SearchInput_TextChanged"/>
 
-                                <Setter Property="HorizontalContentAlignment"
-                                        Value="Stretch"/>
+                        <WrapPanel>
 
-                                <Setter Property="Background"
-                                        Value="Transparent"/>
+                            <StackPanel Margin="0,0,12,10">
+                                <TextBlock Text="Приоритет"
+                                           FontSize="12"
+                                           Foreground="#64748B"
+                                           Margin="0,0,0,5"/>
 
-                                <Setter Property="BorderThickness"
-                                        Value="0"/>
+                                <ComboBox x:Name="PriorityFilter"
+                                          Width="175"
+                                          SelectedIndex="0"
+                                          SelectionChanged="Filter_SelectionChanged">
 
-                            </Style>
-                        </ListView.ItemContainerStyle>
+                                    <ComboBoxItem Content="Все приоритеты"/>
+                                    <ComboBoxItem Content="Низкий"/>
+                                    <ComboBoxItem Content="Средний"/>
+                                    <ComboBoxItem Content="Высокий"/>
+                                    <ComboBoxItem Content="Критический"/>
 
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
+                                </ComboBox>
+                            </StackPanel>
 
-                                <Border Background="White"
-                                        CornerRadius="10"
-                                        Padding="15">
+                            <StackPanel Margin="0,0,12,10">
+                                <TextBlock Text="Статус"
+                                           FontSize="12"
+                                           Foreground="#64748B"
+                                           Margin="0,0,0,5"/>
 
-                                    <Grid>
+                                <ComboBox x:Name="StatusFilter"
+                                          Width="155"
+                                          SelectedIndex="0"
+                                          SelectionChanged="Filter_SelectionChanged">
 
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="35"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="100"/>
-                                            <ColumnDefinition Width="100"/>
-                                        </Grid.ColumnDefinitions>
+                                    <ComboBoxItem Content="Все задачи"/>
+                                    <ComboBoxItem Content="Активные"/>
+                                    <ComboBoxItem Content="Выполненные"/>
 
-                                        <!-- Отметка выполнения -->
-                                        <CheckBox Grid.Column="0"
-                                                  VerticalAlignment="Center"
-                                                  IsChecked="{Binding IsCompleted,
+                                </ComboBox>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,0,0,10">
+                                <TextBlock Text="Сортировка"
+                                           FontSize="12"
+                                           Foreground="#64748B"
+                                           Margin="0,0,0,5"/>
+
+                                <ComboBox x:Name="SortFilter"
+                                          Width="220"
+                                          SelectedIndex="0"
+                                          SelectionChanged="Filter_SelectionChanged">
+
+                                    <ComboBoxItem Content="Без сортировки"/>
+                                    <ComboBoxItem Content="Сначала ближайший срок"/>
+                                    <ComboBoxItem Content="Сначала высокий приоритет"/>
+
+                                </ComboBox>
+                            </StackPanel>
+
+                        </WrapPanel>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- СПИСОК ЗАДАЧ -->
+                <TextBlock Text="Список задач"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="#1E293B"
+                           Margin="0,0,0,15"/>
+
+                <ListView x:Name="TasksList"
+                          ItemsSource="{Binding Tasks}"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="0,0,0,10"/>
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+
+                            <Border Background="White"
+                                    CornerRadius="10"
+                                    Padding="15">
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="35"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- ВЫПОЛНЕНИЕ -->
+                                    <CheckBox Grid.Column="0"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding IsCompleted,
                                                   Mode=TwoWay,
                                                   UpdateSourceTrigger=PropertyChanged}"/>
 
-                                        <!-- Информация о задаче -->
-                                        <StackPanel Grid.Column="1"
-                                                    VerticalAlignment="Center">
+                                    <!-- ИНФОРМАЦИЯ О ЗАДАЧЕ -->
+                                    <StackPanel Grid.Column="1"
+                                                VerticalAlignment="Center">
 
-                                            <TextBlock Text="{Binding Title}"
-                                                       FontSize="14"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="#202B3C"
-                                                       TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="15"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#1E293B"
+                                                   TextWrapping="Wrap"/>
 
-                                            <TextBlock Text="{Binding StatusText}"
-                                                       FontSize="12"
-                                                       Foreground="#788397"
-                                                       Margin="0,5,0,0"/>
+                                        <TextBlock Text="{Binding StatusText}"
+                                                   FontSize="12"
+                                                   Foreground="#64748B"
+                                                   Margin="0,4,0,0"/>
 
-                                            <TextBlock Text="{Binding Priority,
-                                                       StringFormat=Приоритет: {0}}"
-                                                       FontSize="12"
-                                                       Foreground="#536FE8"
-                                                       Margin="0,5,0,0"/>
+                                        <TextBlock Text="{Binding Priority}"
+                                                   FontSize="12"
+                                                   Foreground="#6366F1"
+                                                   Margin="0,3,0,0"/>
 
-                                            <TextBlock Text="{Binding DeadlineStatusText}"
-                                                       FontSize="12"
-                                                       Margin="0,4,0,0">    
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="Foreground" Value="#64748B"/>
+                                        <!-- СТАТУС СРОКА -->
+                                        <TextBlock Text="{Binding DeadlineStatusText}"
+                                                   FontSize="12"
+                                                   Margin="0,4,0,0">
 
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsOverdue}" Value="True">
-                                                                <Setter Property="Foreground" Value="#EF4444"/>
-                                                                <Setter Property="FontWeight" Value="Bold"/>
-                                                            </DataTrigger>
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
 
-                                                            <DataTrigger Binding="{Binding DeadlineStatusText}"
-                                                                Value="Срок сегодня">
-                                                                <Setter Property="Foreground" Value="#D97706"/>
-                                                                <Setter Property="FontWeight" Value="Bold"/>
-                                                            </DataTrigger>
+                                                    <Setter Property="Foreground"
+                                                            Value="#64748B"/>
 
-                                                            <DataTrigger Binding="{Binding IsCompleted}" Value="True">
-                                                                <Setter Property="Foreground" Value="#16A34A"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock> 
+                                                    <Style.Triggers>
 
-                                        </StackPanel>
+                                                        <DataTrigger Binding="{Binding IsOverdue}"
+                                                                     Value="True">
 
-                                        <!-- Кнопка изменения -->
-                                        <Button Grid.Column="2"
-                                                Content="Изменить"
-                                                Tag="{Binding}"
-                                                Click="EditTask_Click"
-                                                Background="#E8EDFF"
-                                                Foreground="#536FE8"
-                                                BorderThickness="0"
-                                                Padding="8,6"
-                                                Cursor="Hand"
-                                                Margin="5,0"/>
+                                                            <Setter Property="Foreground"
+                                                                    Value="#EF4444"/>
 
-                                        <!-- Кнопка удаления -->
-                                        <Button Grid.Column="3"
-                                                Content="Удалить"
-                                                Tag="{Binding}"
-                                                Click="DeleteTask_Click"
-                                                Background="#FCEAEA"
-                                                Foreground="#C94C4C"
-                                                BorderThickness="0"
-                                                Padding="8,6"
-                                                Cursor="Hand"
-                                                Margin="5,0"/>
+                                                            <Setter Property="FontWeight"
+                                                                    Value="Bold"/>
 
-                                    </Grid>
-                                </Border>
+                                                        </DataTrigger>
 
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
+                                                        <DataTrigger Binding="{Binding DeadlineStatusText}"
+                                                                     Value="Срок сегодня">
 
-                    </ListView>
+                                                            <Setter Property="Foreground"
+                                                                    Value="#D97706"/>
 
-                </StackPanel>
-            </ScrollViewer>
-        </Border>
+                                                            <Setter Property="FontWeight"
+                                                                    Value="Bold"/>
+
+                                                        </DataTrigger>
+
+                                                        <DataTrigger Binding="{Binding IsCompleted}"
+                                                                     Value="True">
+
+                                                            <Setter Property="Foreground"
+                                                                    Value="#16A34A"/>
+
+                                                        </DataTrigger>
+
+                                                    </Style.Triggers>
+
+                                                </Style>
+                                            </TextBlock.Style>
+
+                                        </TextBlock>
+
+                                    </StackPanel>
+
+                                    <!-- ИЗМЕНИТЬ -->
+                                    <Button Grid.Column="2"
+                                            Content="Изменить"
+                                            Style="{StaticResource SecondaryButtonStyle}"
+                                            Margin="8,0"
+                                            VerticalAlignment="Center"
+                                            Tag="{Binding}"
+                                            Click="EditTask_Click"/>
+
+                                    <!-- УДАЛИТЬ -->
+                                    <Button Grid.Column="3"
+                                            Content="Удалить"
+                                            Background="#FEE2E2"
+                                            Foreground="#DC2626"
+                                            FontSize="12"
+                                            Padding="10,7"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            VerticalAlignment="Center"
+                                            Tag="{Binding}"
+                                            Click="DeleteTask_Click"/>
+
+                                </Grid>
+
+                            </Border>
+
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+                </ListView>
+
+            </StackPanel>
+        </ScrollViewer>
+
     </Grid>
 </Window>

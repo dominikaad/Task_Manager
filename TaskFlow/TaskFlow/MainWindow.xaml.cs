@@ -1,23 +1,23 @@
 ﻿using System;
-using System.Linq;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+
 using TaskFlow.Models;
-using TaskFlow.Views;
 using TaskFlow.Services;
+using TaskFlow.Views;
 
 namespace TaskFlow
 {
     public partial class MainWindow : Window
     {
-        // Коллекция всех задач
         public ObservableCollection<TaskItem> Tasks { get; set; }
 
-        // Представление коллекции для поиска и фильтрации
         private ICollectionView? _tasksView;
 
         public MainWindow()
@@ -27,14 +27,22 @@ namespace TaskFlow
             // Загружаем задачи из файла
             var savedTasks = TaskStorageService.LoadTasks();
 
-            Tasks = savedTasks == null
-                ? new ObservableCollection<TaskItem>()
-                : new ObservableCollection<TaskItem>(savedTasks);
+            if (savedTasks != null)
+            {
+                Tasks = new ObservableCollection<TaskItem>(savedTasks);
+            }
+            else
+            {
+                Tasks = new ObservableCollection<TaskItem>();
+            }
 
+            // Устанавливаем источник данных
             DataContext = this;
 
-            // Настраиваем фильтрацию
+            // Настраиваем представление коллекции
             _tasksView = CollectionViewSource.GetDefaultView(Tasks);
+
+            // Настраиваем фильтрацию
             _tasksView.Filter = FilterTasks;
 
             // Подписываем задачи на отслеживание изменений
@@ -43,74 +51,84 @@ namespace TaskFlow
                 task.PropertyChanged += Task_PropertyChanged;
             }
 
+            // Отслеживаем добавление и удаление задач
             Tasks.CollectionChanged += Tasks_CollectionChanged;
 
-            // Демонстрационные задачи создаём только при первом запуске
+            // Демонстрационные задачи добавляем только при первом запуске
             if (savedTasks == null)
             {
                 AddInitialTasks();
             }
 
+            // Применяем сортировку
+            ApplyTaskSort();
+
+            // Обновляем статистику
             UpdateStatistics();
         }
 
-        // Проверка задачи по выбранным фильтрам
+        // ==========================================
+        // ФИЛЬТРАЦИЯ ЗАДАЧ
+        // ==========================================
+
         private bool FilterTasks(object item)
         {
             if (item is not TaskItem task)
                 return false;
 
-            // Поиск по названию
-            string searchText = SearchInput.Text.Trim();
+            // Поиск по названию задачи
+            string searchText = SearchInput.Text?.Trim() ?? "";
 
-            if (!string.IsNullOrWhiteSpace(searchText) &&
-                !task.Title.Contains(
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                if (!task.Title.Contains(
                     searchText,
                     StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
+                {
+                    return false;
+                }
             }
 
             // Фильтр по приоритету
-            string priority = "Все приоритеты";
-
             if (PriorityFilter.SelectedItem is ComboBoxItem priorityItem)
             {
-                priority = priorityItem.Content?.ToString()
-                           ?? "Все приоритеты";
-            }
+                string selectedPriority =
+                    priorityItem.Content?.ToString() ?? "";
 
-            if (priority != "Все приоритеты" &&
-                task.Priority != priority)
-            {
-                return false;
+                if (selectedPriority != "Все приоритеты" &&
+                    task.Priority != selectedPriority)
+                {
+                    return false;
+                }
             }
 
             // Фильтр по статусу
-            string status = "Все задачи";
-
             if (StatusFilter.SelectedItem is ComboBoxItem statusItem)
             {
-                status = statusItem.Content?.ToString()
-                         ?? "Все задачи";
+                string selectedStatus =
+                    statusItem.Content?.ToString() ?? "";
+
+                if (selectedStatus == "Активные" && task.IsCompleted)
+                {
+                    return false;
+                }
+
+                if (selectedStatus == "Выполненные" && !task.IsCompleted)
+                {
+                    return false;
+                }
             }
-
-            if (status == "Активные" && task.IsCompleted)
-                return false;
-
-            if (status == "Выполненные" && !task.IsCompleted)
-                return false;
 
             return true;
         }
 
-        // Обновление фильтрации
+        // Обновление поиска и фильтров
         private void RefreshTaskFilter()
         {
             _tasksView?.Refresh();
         }
 
-        // Изменение поискового запроса
+        // Обработчик поиска
         private void SearchInput_TextChanged(
             object sender,
             TextChangedEventArgs e)
@@ -118,53 +136,87 @@ namespace TaskFlow
             RefreshTaskFilter();
         }
 
-        // Изменение выбранных фильтров
+        // Обработчик изменения фильтров
         private void Filter_SelectionChanged(
             object sender,
             SelectionChangedEventArgs e)
         {
             RefreshTaskFilter();
+
+            ApplyTaskSort();
         }
 
-        // Добавление начальных задач для демонстрации
+        // ==========================================
+        // СОРТИРОВКА ЗАДАЧ
+        // ==========================================
+
+        private void ApplyTaskSort()
+        {
+            if (_tasksView is not ListCollectionView listView)
+                return;
+
+            int sortMode = SortFilter.SelectedIndex;
+
+            if (sortMode == 0)
+            {
+                // Возвращаем исходный порядок
+                listView.CustomSort = null;
+            }
+            else
+            {
+                // Применяем выбранную сортировку
+                listView.CustomSort = new TaskItemComparer(sortMode);
+            }
+
+            listView.Refresh();
+        }
+
+        // ==========================================
+        // ДЕМОНСТРАЦИОННЫЕ ЗАДАЧИ
+        // ==========================================
+
         private void AddInitialTasks()
         {
             Tasks.Add(new TaskItem
             {
-                Title = "Изучить C#",
-                IsCompleted = false,
+                Title = "Подготовить курсовую работу",
                 Priority = "Высокий",
-                Deadline = DateTime.Today.AddDays(3)
+                Deadline = DateTime.Today.AddDays(3),
+                IsCompleted = false
             });
 
             Tasks.Add(new TaskItem
             {
                 Title = "Выполнить лабораторную работу",
-                IsCompleted = false,
                 Priority = "Критический",
-                Deadline = DateTime.Today.AddDays(1)
+                Deadline = DateTime.Today.AddDays(1),
+                IsCompleted = false
             });
 
             Tasks.Add(new TaskItem
             {
-                Title = "Создать проект TaskFlow",
-                IsCompleted = true,
+                Title = "Повторить материал",
                 Priority = "Средний",
-                Deadline = DateTime.Today.AddDays(-1)
+                Deadline = DateTime.Today.AddDays(5),
+                IsCompleted = false
             });
         }
 
-        // Добавление новой задачи
-        private void AddTask_Click(object sender, RoutedEventArgs e)
+        // ==========================================
+        // ДОБАВЛЕНИЕ ЗАДАЧИ
+        // ==========================================
+
+        private void AddTask_Click(
+            object sender,
+            RoutedEventArgs e)
         {
             string title = TaskTitleInput.Text.Trim();
 
-            // Проверяем, что название не пустое
             if (string.IsNullOrWhiteSpace(title))
             {
                 MessageBox.Show(
-                    "Введите название задачи!",
-                    "Предупреждение",
+                    "Введите название задачи.",
+                    "Внимание",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning
                 );
@@ -172,94 +224,92 @@ namespace TaskFlow
                 return;
             }
 
-            // Получаем выбранный приоритет
             string priority = "Средний";
 
-            if (TaskPriorityInput.SelectedItem is ComboBoxItem selectedItem)
+            if (TaskPriorityInput.SelectedItem is ComboBoxItem priorityItem)
             {
-                priority = selectedItem.Content?.ToString() ?? "Средний";
+                priority = priorityItem.Content?.ToString() ?? "Средний";
             }
 
-            // Получаем выбранную дату
-            DateTime? deadline = TaskDeadlineInput.SelectedDate;
-
-            // Создаем новую задачу
             TaskItem newTask = new TaskItem
             {
                 Title = title,
-                IsCompleted = false,
                 Priority = priority,
-                Deadline = deadline
+                Deadline = TaskDeadlineInput.SelectedDate,
+                IsCompleted = false
             };
 
-            // Добавляем задачу в начало списка
-            Tasks.Insert(0, newTask);
+            Tasks.Add(newTask);
 
-            // Очищаем поле названия
+            // Очищаем поля ввода
             TaskTitleInput.Clear();
-
-            // Сбрасываем приоритет на «Средний»
+            TaskDeadlineInput.SelectedDate = null;
             TaskPriorityInput.SelectedIndex = 1;
 
-            // Очищаем выбранную дату
-            TaskDeadlineInput.SelectedDate = null;
-
-            // Возвращаем курсор в поле ввода
-            TaskTitleInput.Focus();
+            // Обновляем статистику
+            UpdateStatistics();
         }
 
-        // Удаление задачи
-        private void DeleteTask_Click(object sender, RoutedEventArgs e)
+        // ==========================================
+        // УДАЛЕНИЕ ЗАДАЧИ
+        // ==========================================
+
+        private void DeleteTask_Click(
+            object sender,
+            RoutedEventArgs e)
         {
             if (sender is Button button &&
                 button.Tag is TaskItem task)
             {
-                Tasks.Remove(task);
-            }
-        }
+                MessageBoxResult result = MessageBox.Show(
+                    $"Вы действительно хотите удалить задачу \"{task.Title}\"?",
+                    "Удаление задачи",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
+                );
 
-        // Редактирование задачи через отдельное окно
-        private void EditTask_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button &&
-                button.Tag is TaskItem task)
-            {
-                // Создаем окно редактирования
-                EditTaskWindow editWindow = new EditTaskWindow(task);
-
-                // Указываем главное окно владельцем
-                editWindow.Owner = this;
-
-                // Открываем окно редактирования
-                bool? result = editWindow.ShowDialog();
-
-                // Если изменения сохранены
-                if (result == true)
+                if (result == MessageBoxResult.Yes)
                 {
-                    UpdateStatistics();
-                    RefreshTaskFilter();
+                    Tasks.Remove(task);
                 }
             }
         }
 
-        private void SaveTasks()
+        // ==========================================
+        // РЕДАКТИРОВАНИЕ ЗАДАЧИ
+        // ==========================================
+
+        private void EditTask_Click(
+            object sender,
+            RoutedEventArgs e)
         {
-            try
+            if (sender is Button button &&
+                button.Tag is TaskItem task)
             {
-                TaskStorageService.SaveTasks(Tasks);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "Не удалось сохранить задачи.\n" + ex.Message,
-                    "Ошибка сохранения",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                EditTaskWindow editWindow = new EditTaskWindow(task);
+
+                editWindow.Owner = this;
+
+                bool? result = editWindow.ShowDialog();
+
+                if (result == true)
+                {
+                    UpdateStatistics();
+
+                    RefreshTaskFilter();
+
+                    ApplyTaskSort();
+                }
             }
         }
-        // Реакция на изменение коллекции задач
-        private void Tasks_CollectionChanged(object? sender,NotifyCollectionChangedEventArgs e)
+
+        // ==========================================
+        // ОТСЛЕЖИВАНИЕ ИЗМЕНЕНИЙ КОЛЛЕКЦИИ
+        // ==========================================
+
+        private void Tasks_CollectionChanged(
+            object? sender,
+            NotifyCollectionChangedEventArgs e)
         {
             // Отписываемся от удалённых задач
             if (e.OldItems != null)
@@ -281,38 +331,169 @@ namespace TaskFlow
 
             UpdateStatistics();
 
-            // Сохраняем изменения
+            RefreshTaskFilter();
+
+            ApplyTaskSort();
+
             SaveTasks();
         }
 
-        // Реакция на изменение свойств задачи
+        // ==========================================
+        // ОТСЛЕЖИВАНИЕ ИЗМЕНЕНИЙ СВОЙСТВ ЗАДАЧИ
+        // ==========================================
+
         private void Task_PropertyChanged(
             object? sender,
             PropertyChangedEventArgs e)
         {
+            // Обновляем статистику
             UpdateStatistics();
 
             // Обновляем фильтрацию
-            _tasksView?.Refresh();
+            RefreshTaskFilter();
 
-            // Сохраняем изменения задачи
+            // Обновляем сортировку
+            ApplyTaskSort();
+
+            // Сохраняем изменения
             SaveTasks();
         }
 
-        // Обновление статистики
+        // ==========================================
+        // СОХРАНЕНИЕ ЗАДАЧ
+        // ==========================================
+
+        private void SaveTasks()
+        {
+            try
+            {
+                TaskStorageService.SaveTasks(Tasks);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Не удалось сохранить задачи.\n" + ex.Message,
+                    "Ошибка сохранения",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
+        }
+
+        // ==========================================
+        // ОБНОВЛЕНИЕ СТАТИСТИКИ
+        // ==========================================
+
         private void UpdateStatistics()
         {
+            if (TotalTasksText == null ||
+                ActiveTasksText == null ||
+                CompletedTasksText == null)
+            {
+                return;
+            }
+
             int total = Tasks.Count;
 
-            int completed = Tasks.Count(
-                task => task.IsCompleted
-            );
+            int completed = Tasks.Count(task => task.IsCompleted);
 
             int active = total - completed;
 
-            TotalCountText.Text = total.ToString();
-            ActiveCountText.Text = active.ToString();
-            CompletedCountText.Text = completed.ToString();
+            TotalTasksText.Text = total.ToString();
+
+            ActiveTasksText.Text = active.ToString();
+
+            CompletedTasksText.Text = completed.ToString();
+        }
+    }
+
+    // ==========================================
+    // КЛАСС СОРТИРОВКИ ЗАДАЧ
+    // ==========================================
+
+    public class TaskItemComparer : IComparer
+    {
+        private readonly int _sortMode;
+
+        public TaskItemComparer(int sortMode)
+        {
+            _sortMode = sortMode;
+        }
+
+        public int Compare(object? x, object? y)
+        {
+            if (x is not TaskItem task1 ||
+                y is not TaskItem task2)
+            {
+                return 0;
+            }
+
+            // Сортировка по ближайшему сроку
+            if (_sortMode == 1)
+            {
+                if (!task1.Deadline.HasValue &&
+                    !task2.Deadline.HasValue)
+                {
+                    return 0;
+                }
+
+                if (!task1.Deadline.HasValue)
+                    return 1;
+
+                if (!task2.Deadline.HasValue)
+                    return -1;
+
+                return task1.Deadline.Value.CompareTo(
+                    task2.Deadline.Value
+                );
+            }
+
+            // Сортировка по приоритету
+            if (_sortMode == 2)
+            {
+                int priority1 = GetPriorityValue(task1.Priority);
+
+                int priority2 = GetPriorityValue(task2.Priority);
+
+                int result = priority2.CompareTo(priority1);
+
+                if (result != 0)
+                    return result;
+
+                // При одинаковом приоритете
+                // сначала показываем ближайший срок
+
+                if (!task1.Deadline.HasValue &&
+                    !task2.Deadline.HasValue)
+                {
+                    return 0;
+                }
+
+                if (!task1.Deadline.HasValue)
+                    return 1;
+
+                if (!task2.Deadline.HasValue)
+                    return -1;
+
+                return task1.Deadline.Value.CompareTo(
+                    task2.Deadline.Value
+                );
+            }
+
+            return 0;
+        }
+
+        // Определение числового значения приоритета
+        private int GetPriorityValue(string priority)
+        {
+            return priority switch
+            {
+                "Критический" => 4,
+                "Высокий" => 3,
+                "Средний" => 2,
+                "Низкий" => 1,
+                _ => 0
+            };
         }
     }
 }
