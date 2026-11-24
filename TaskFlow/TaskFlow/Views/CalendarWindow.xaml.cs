@@ -275,47 +275,63 @@ namespace TaskFlow.Views
         // ==========================================
         // ОБНОВЛЕНИЕ СПИСКА ЗАДАЧ
         // ==========================================
-
-
         private void UpdateSelectedTasks()
         {
             // Очищаем предыдущий список
             SelectedTasks.Clear();
 
-            // Обновляем заголовок
-            SelectedDateText.Text =
-                $"Задачи на {SelectedDate:dd.MM.yyyy}";
-
-            // Определяем, нужно ли показывать выполненные задачи
-            bool showCompleted = ShowCompletedCheckBox.IsChecked == true;
-
-            // Получаем задачи выбранной даты
-            var tasksForDate = _allTasks
+            // Получаем все задачи выбранной даты
+            var allTasksForDate = _allTasks
                 .Where(task =>
                     task.Deadline.HasValue &&
-                    task.Deadline.Value.Date == SelectedDate.Date &&
-                    (showCompleted || !task.IsCompleted))
+                    task.Deadline.Value.Date == SelectedDate.Date)
                 .ToList();
 
-            // Добавляем задачи в отображаемый список
-            foreach (var task in tasksForDate)
+            // Считаем общее количество задач
+            int totalCount = allTasksForDate.Count;
+
+            // Считаем количество выполненных задач
+            int completedCount = allTasksForDate.Count(
+                task => task.IsCompleted);
+
+            // Считаем количество активных задач
+            int activeCount = totalCount - completedCount;
+
+            // Формируем статистику
+            SelectedDateText.Text =
+                $"Задачи на {SelectedDate:dd.MM.yyyy}  |  " +
+                $"Всего: {totalCount}  |  " +
+                $"Активных: {activeCount}  |  " +
+                $"Выполнено: {completedCount}";
+
+            // Проверяем состояние фильтра
+            bool showCompleted = ShowCompletedCheckBox.IsChecked == true;
+
+            // Формируем отображаемый список
+            var tasksToShow = allTasksForDate
+                .Where(task => showCompleted || !task.IsCompleted)
+                .ToList();
+
+            // Добавляем задачи в список
+            foreach (var task in tasksToShow)
             {
                 SelectedTasks.Add(task);
             }
 
-            // Если задач нет, показываем соответствующее сообщение
-            if (tasksForDate.Count == 0)
+            // Если задач для отображения нет
+            if (tasksToShow.Count == 0)
             {
-                if (showCompleted)
+                if (totalCount == 0)
                 {
                     SelectedDateText.Text += " — задач нет";
                 }
                 else
                 {
-                    SelectedDateText.Text += " — активных задач нет";
+                    SelectedDateText.Text += " — все задачи выполнены";
                 }
             }
         }
+
 
 
         // ==========================================
