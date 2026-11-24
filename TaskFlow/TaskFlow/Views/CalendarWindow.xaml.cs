@@ -514,5 +514,30 @@ namespace TaskFlow.Views
 
             activeButton.Foreground = Brushes.White;
         }
+        private void SelectedTasksList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            // Получаем выбранную задачу
+            if (sender is not ListBox listBox)
+                return;
+
+            if (listBox.SelectedItem is not TaskItem selectedTask)
+                return;
+
+            // Открываем окно редактирования
+            EditTaskWindow editWindow = new EditTaskWindow(selectedTask);
+
+            // Устанавливаем текущее окно владельцем
+            editWindow.Owner = this;
+
+            // Показываем окно
+            bool? result = editWindow.ShowDialog();
+
+            // Обновляем календарь после закрытия окна
+            if (result == true)
+            {
+                BuildCalendar();
+                UpdateSelectedTasks();
+            }
+        }
     }
 }

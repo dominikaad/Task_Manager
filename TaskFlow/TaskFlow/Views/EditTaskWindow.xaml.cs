@@ -56,6 +56,7 @@ namespace TaskFlow.Views
             _task.Deadline = DeadlineInput.SelectedDate;
 
             DialogResult = true;
+            Close();
         }
 
         // Отмена редактирования

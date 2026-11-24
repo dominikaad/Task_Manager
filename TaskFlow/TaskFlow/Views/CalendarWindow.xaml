@@ -228,7 +228,8 @@
 
             <ListBox ItemsSource="{Binding SelectedTasks}"
                      BorderThickness="0"
-                     Background="Transparent">
+                     Background="Transparent"
+                     MouseDoubleClick="SelectedTasksList_MouseDoubleClick">
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
