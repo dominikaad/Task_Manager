@@ -318,7 +318,28 @@ namespace TaskFlow.Views
 
                     content.Children.Add(indicators);
                 }
+                // Формируем подсказку с задачами на выбранную дату
+                if (tasksForDate.Count > 0)
+                {
+                    string tasksTooltip = string.Join(
+                        Environment.NewLine,
+                        tasksForDate.Select(task =>
+                            $"{task.Title} | " +
+                            $"Приоритет: {task.Priority} | " +
+                            $"Статус: {(task.IsCompleted ? "Выполнена" : "Активна")}"));
 
+                    dayButton.ToolTip =
+                        $"{date:dd.MM.yyyy}" +
+                        Environment.NewLine +
+                        tasksTooltip;
+                }
+                else
+                {
+                    dayButton.ToolTip =
+                        $"{date:dd.MM.yyyy}" +
+                        Environment.NewLine +
+                        "На эту дату задач нет";
+                }
                 dayButton.Content = content;
 
                 dayButton.Click += CalendarDay_Click;
