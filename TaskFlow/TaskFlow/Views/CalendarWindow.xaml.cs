@@ -413,9 +413,12 @@ namespace TaskFlow.Views
             // Проверяем состояние фильтра
             bool showCompleted = ShowCompletedCheckBox.IsChecked == true;
 
-            // Формируем отображаемый список
+            // Формируем список задач с учётом фильтра
+            // и сортируем по приоритету
             var tasksToShow = allTasksForDate
                 .Where(task => showCompleted || !task.IsCompleted)
+                .OrderBy(task => GetPriorityOrder(task.Priority))
+                .ThenBy(task => task.Title)
                 .ToList();
 
             // Добавляем задачи в список
@@ -436,6 +439,19 @@ namespace TaskFlow.Views
                     SelectedDateText.Text += " — все задачи выполнены";
                 }
             }
+        }
+        private int GetPriorityOrder(object? priority)
+        {
+            string priorityText = priority?.ToString() ?? "";
+
+            return priorityText switch
+            {
+                "Критический" => 0,
+                "Высокий" => 1,
+                "Средний" => 2,
+                "Низкий" => 3,
+                _ => 4
+            };
         }
 
 
