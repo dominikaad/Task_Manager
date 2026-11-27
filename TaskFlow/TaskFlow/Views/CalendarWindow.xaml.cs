@@ -200,7 +200,7 @@ namespace TaskFlow.Views
                 {
                     Margin = new Thickness(3),
                     Padding = new Thickness(4),
-                    MinHeight = 50,
+                    MinHeight = 70,
                     Tag = date,
                     IsEnabled = _calendarMode != "Месяц" || isCurrentMonth,
                     Cursor = Cursors.Hand,
@@ -279,7 +279,7 @@ namespace TaskFlow.Views
                     TextBlock countText = new TextBlock
                     {
                         Text = $"Задач: {tasksForDate.Count}",
-                        FontSize = 10,
+                        FontSize = 11,
 
                         Foreground = new SolidColorBrush(
                             Color.FromRgb(51, 65, 85)),
@@ -289,6 +289,27 @@ namespace TaskFlow.Views
                     };
 
                     content.Children.Add(countText);
+                    // Подсчитываем просроченные задачи
+                    int overdueCount = tasksForDate.Count(task => task.IsOverdue);
+
+                    // Если есть просроченные задачи, показываем их количество
+                    if (overdueCount > 0)
+                    {
+                        TextBlock overdueText = new TextBlock
+                        {
+                            Text = $"Просрочено: {overdueCount}",
+                            FontSize = 10,
+                            FontWeight = FontWeights.SemiBold,
+
+                            Foreground = new SolidColorBrush(
+                                Color.FromRgb(220, 38, 38)),
+
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            Margin = new Thickness(0, 2, 0, 2)
+                        };
+
+                        content.Children.Add(overdueText);
+                    }
 
                     // Цветные индикаторы приоритетов
                     WrapPanel indicators = new WrapPanel

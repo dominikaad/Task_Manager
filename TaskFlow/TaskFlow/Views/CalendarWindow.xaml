@@ -190,7 +190,6 @@
             <UniformGrid x:Name="CalendarGrid"
                          Columns="7"
                          Rows="6"/>
-
         </Border>
 
 
