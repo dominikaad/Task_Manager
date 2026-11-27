@@ -258,13 +258,15 @@ namespace TaskFlow.Views
                     FontSize = 16,
                     FontWeight = FontWeights.SemiBold,
 
-                    // Для выбранной даты используем белый цвет
-                    // Для сегодняшней даты — синий
+                    // Цвет номера дня
                     Foreground = isSelected
-                        ? Brushes.White
+                        ? new SolidColorBrush(Color.FromRgb(55, 48, 163))
                         : isToday
                             ? new SolidColorBrush(Color.FromRgb(37, 99, 235))
-                            : new SolidColorBrush(Color.FromRgb(30, 41, 59)),
+                            : (date.DayOfWeek == DayOfWeek.Saturday ||
+                               date.DayOfWeek == DayOfWeek.Sunday)
+                                ? new SolidColorBrush(Color.FromRgb(220, 90, 100))
+                                : new SolidColorBrush(Color.FromRgb(30, 41, 59)),
 
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
